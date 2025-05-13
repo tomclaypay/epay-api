@@ -90,18 +90,16 @@ export class AuthService {
       if (!user) {
         return null
       }
+      const payload = {
+        username: user.username,
+        id: user._id,
+        fullName: user.fullName
+      }
 
-      const refreshTokenNew = this.jwtService.sign(
-        {
-          username: user.username,
-          id: user._id,
-          fullName: user.fullName
-        },
-        {
-          expiresIn: parseInt(process.env.REFRESH_TOKEN_TTL),
-          secret: process.env.REFRESH_TOKEN_SECRET
-        }
-      )
+      const refreshTokenNew = this.jwtService.sign(payload, {
+        expiresIn: parseInt(process.env.REFRESH_TOKEN_TTL),
+        secret: process.env.REFRESH_TOKEN_SECRET
+      })
 
       await this.refreshTokensService.deleteRefreshToken(refreshToken)
 
@@ -112,12 +110,6 @@ export class AuthService {
         expiresAt: refreshTokenDoc.expiresAt
       })
 
-      const payload = {
-        username: user.username,
-        id: user._id,
-        fullName: user.fullName
-        // avatar: user.avatar
-      }
       return {
         id: user._id,
         accessToken: this.jwtService.sign(payload, {
