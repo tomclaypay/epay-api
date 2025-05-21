@@ -42,7 +42,8 @@ import {
 import { UsersService } from '../../resources/users/users.service'
 import {
   CreateWithdrawalOrderDto,
-  ManualWithdrawalDto
+  ManualWithdrawalDto,
+  UpdateWithdrawalOrderDto
 } from '../../resources/withdrawals/dto/withdrawal-request.dto'
 import { WithdrawalsService } from '../../resources/withdrawals/withdrawals.service'
 import { GetSummaryQueriesDto } from './dto/admin-request.dto'
@@ -471,6 +472,16 @@ export class AdminsService implements OnModuleInit {
     )
   }
 
+  async updateWithdrawalForAdmin(
+    id: string,
+    updateWithdrawalOrderDto: UpdateWithdrawalOrderDto
+  ) {
+    return this.withdrawalsService.updateWithdrawalOrder(
+      id,
+      updateWithdrawalOrderDto
+    )
+  }
+
   async getWithdrawalBanksForAdmin() {
     return this.settingsService.getWithdrawalBanksForAdmin()
   }
@@ -606,7 +617,9 @@ export class AdminsService implements OnModuleInit {
         ? bankAccountNameDest
         : withdrawalOrder.bankAccountNameDest
     })
-    return 'succeed'
+    return {
+      status: 'succeed'
+    }
   }
 
   async deleteWithdrawalForAdmin(withdrawalId: string, userId: string) {

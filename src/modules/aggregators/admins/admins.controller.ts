@@ -11,7 +11,8 @@ import {
   Body,
   Patch,
   Post,
-  Delete
+  Delete,
+  Put
 } from '@nestjs/common'
 import {
   ApiBearerAuth,
@@ -99,6 +100,7 @@ import { UpdateSettingsDto } from '../../resources/settings/dto/setting-request.
 import {
   CreateWithdrawalOrderDto,
   ManualWithdrawalDto,
+  UpdateWithdrawalOrderDto,
   UpdateWithdrawalStatusDto,
   WithdrawalListing,
   WithdrawalListingForExport
@@ -721,6 +723,24 @@ export class AdminsController {
     @Body() createWithdrawalOrderDto: CreateWithdrawalOrderDto
   ) {
     return this.adminsService.createWithdrawalForAdmin(createWithdrawalOrderDto)
+  }
+
+  @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @Permission(WITHDRAWAL_CRUD)
+  @Put('withdrawals/:withdrawalId')
+  @AuthApiError()
+  @ApiCreatedResponse({
+    description: 'Update withdrawal successful'
+  })
+  async updateWithdrawalForAdmin(
+    @Param('withdrawalId') withdrawalId: string,
+    @Body() updateWithdrawalOrderDto: UpdateWithdrawalOrderDto
+  ) {
+    return this.adminsService.updateWithdrawalForAdmin(
+      withdrawalId,
+      updateWithdrawalOrderDto
+    )
   }
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)

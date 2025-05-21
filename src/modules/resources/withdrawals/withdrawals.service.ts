@@ -274,7 +274,9 @@ export class WithdrawalsService implements OnModuleInit {
       telegramMsg.replace(/  /g, '')
     )
 
-    return 'succeed'
+    return {
+      status: 'succeed'
+    }
   }
 
   async matchWithdrawOrder(
@@ -369,7 +371,9 @@ export class WithdrawalsService implements OnModuleInit {
       withdrawal.amount,
       withdrawal.note
     )
-    return 'succeed'
+    return {
+      status: 'succeed'
+    }
   }
 
   async withdrawalListing(
@@ -558,7 +562,7 @@ export class WithdrawalsService implements OnModuleInit {
     const withdrawal = await this.withdrawalModel.findById(id)
     if (!withdrawal)
       throw new HttpException('Withdrawal not found', HttpStatus.NOT_FOUND)
-    await withdrawal.updateOne({
+    return withdrawal.updateOne({
       deleted: true,
       deletedBy: userId,
       deletedAt: new Date()

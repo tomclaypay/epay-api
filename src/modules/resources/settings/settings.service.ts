@@ -51,6 +51,6 @@ export class SettingsService {
     if (setting.virtualType === 'VOV5') {
       withdrawalBanks = setting.withdrawalBanksVov5
     }
-    return { withdrawalBanks }
+    return { data: withdrawalBanks }
   }
 }

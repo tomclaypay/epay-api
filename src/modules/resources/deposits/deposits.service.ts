@@ -256,7 +256,9 @@ export class DepositsService implements OnModuleInit {
         ? transaction?.bankAccountNo
         : transaction?.bankAccount
     )
-    return 'succeed'
+    return {
+      status: 'succeed'
+    }
   }
 
   async manualDeposit(
@@ -442,7 +444,9 @@ export class DepositsService implements OnModuleInit {
       deposit.actualAmount,
       deposit.note
     )
-    return 'succeed'
+    return {
+      status: 'succeed'
+    }
   }
 
   // API
