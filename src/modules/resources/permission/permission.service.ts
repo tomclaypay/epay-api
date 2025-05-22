@@ -25,7 +25,7 @@ export class PermissionService {
       }
       if (keyword) {
         filter['$or'] = [
-          { name: { $regex: new RegExp(`.*${keyword}.*`, 'i') } },
+          { key: { $regex: new RegExp(`.*${keyword}.*`, 'i') } },
           { title: { $regex: new RegExp(`.*${keyword}.*`, 'i') } },
           { description: { $regex: new RegExp(`.*${keyword}.*`, 'i') } }
         ]
