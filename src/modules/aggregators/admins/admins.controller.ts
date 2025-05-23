@@ -34,21 +34,54 @@ import {
   BankDetail
 } from '../../resources/banks/dto/bank-response.dto'
 import {
+  BANK_CREATE,
   BANK_CRUD,
+  BANK_DELETE,
+  BANK_GET,
+  BANK_TRANSACTION_CRUD,
+  BANK_TRANSACTION_DELETE,
+  BANK_TRANSACTION_GET,
+  BANK_UPDATE,
+  CASHOUT_CREATE,
   CASHOUT_CRUD,
+  CASHOUT_DELETE,
   CASHOUT_GET,
+  CASHOUT_UPDATE,
+  DEPOSIT_CREATE,
   DEPOSIT_CRUD,
+  DEPOSIT_DELETE,
   DEPOSIT_GET,
+  DEPOSIT_MANUAL,
+  DEPOSIT_RESEND_CALLBACK,
+  DEPOSIT_UPDATE,
+  DEPOSIT_VERIFY,
+  PERMISSION_CREATE,
   PERMISSION_CRUD,
+  PERMISSION_DELETE,
+  PERMISSION_GET,
+  PERMISSION_UPDATE,
+  ROLE_CREATE,
   ROLE_CRUD,
+  ROLE_DELETE,
+  ROLE_GET,
+  ROLE_UPDATE,
   SETTING_CRUD,
   SUMMARY_GET,
-  TRANSACTION_CRUD,
-  TRANSACTION_GET,
+  USER_CREATE,
   USER_CRUD,
+  USER_DELETE,
+  USER_GET,
+  USER_UPDATE,
+  WITHDRAWAL_AUTO,
   WITHDRAWAL_CREATE,
   WITHDRAWAL_CRUD,
-  WITHDRAWAL_GET
+  WITHDRAWAL_DELETE,
+  WITHDRAWAL_GET,
+  WITHDRAWAL_MANUAL,
+  WITHDRAWAL_MULTIPLE_AUTO,
+  WITHDRAWAL_RESEND_CALLBACK,
+  WITHDRAWAL_UPDATE,
+  WITHDRAWAL_UPDATE_STATUS
 } from '../../common/contants/permissions'
 import {
   AuthApiError,
@@ -125,7 +158,7 @@ export class AdminsController {
   //Users
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Permission(USER_CRUD)
+  @Permission([USER_CRUD, USER_GET])
   @Get('users')
   @AuthApiError()
   @ApiOkResponse({
@@ -138,7 +171,7 @@ export class AdminsController {
 
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(USER_CRUD)
+  @Permission([USER_CRUD, USER_GET])
   @Post('users/list-for-datatable')
   @AuthApiError()
   async getListUserDatatableForAdmin(@Body() datatableParams: DataTableParams) {
@@ -182,7 +215,7 @@ export class AdminsController {
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Permission(USER_CRUD)
+  @Permission([USER_CRUD, USER_GET])
   @Get('users/:userId')
   @AuthApiError()
   @ApiOkResponse({
@@ -214,7 +247,7 @@ export class AdminsController {
   }
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(USER_CRUD)
+  @Permission([USER_CRUD, USER_CREATE])
   @Post('users/create')
   @AuthApiError()
   @ApiCreatedResponse({
@@ -226,7 +259,7 @@ export class AdminsController {
   }
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(USER_CRUD)
+  @Permission([USER_CRUD, USER_UPDATE])
   @Patch('users/:userId/update')
   @AuthApiError()
   @ApiCreatedResponse({
@@ -251,7 +284,7 @@ export class AdminsController {
   }
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(USER_CRUD)
+  @Permission([USER_CRUD, USER_DELETE])
   @Delete('users/:userId')
   @AuthApiError()
   @ApiOkResponse({
@@ -264,7 +297,7 @@ export class AdminsController {
   //Banks
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Permission(BANK_CRUD)
+  @Permission([BANK_CRUD, BANK_GET])
   @Get('banks')
   @AuthApiError()
   @ApiOkResponse({
@@ -277,7 +310,7 @@ export class AdminsController {
 
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(BANK_CRUD)
+  @Permission([BANK_CRUD, BANK_GET])
   @Post('banks/list-for-datatable')
   @AuthApiError()
   async getListBankDatatableForAdmin(@Body() datatableParams: BankListing) {
@@ -313,7 +346,7 @@ export class AdminsController {
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Permission(BANK_CRUD)
+  @Permission([BANK_CRUD, BANK_GET])
   @Get('banks/:bankId')
   @AuthApiError()
   @ApiOkResponse({
@@ -326,7 +359,7 @@ export class AdminsController {
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Permission(BANK_CRUD)
+  @Permission([BANK_CRUD, BANK_CREATE])
   @Post('banks')
   @AuthApiError()
   @ApiOkResponse({
@@ -339,7 +372,7 @@ export class AdminsController {
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Permission(BANK_CRUD)
+  @Permission([BANK_CRUD, BANK_UPDATE])
   @Patch('banks/:bankId')
   @AuthApiError()
   @ApiOkResponse({
@@ -360,7 +393,7 @@ export class AdminsController {
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Permission(BANK_CRUD)
+  @Permission([BANK_CRUD, BANK_DELETE])
   @Delete('banks/:bankId')
   @AuthApiError()
   @ApiOkResponse({
@@ -374,7 +407,7 @@ export class AdminsController {
   //Deposits
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Permission(DEPOSIT_CRUD)
+  @Permission([DEPOSIT_CRUD, DEPOSIT_GET])
   @Get('deposits')
   @AuthApiError()
   @ApiOkResponse({
@@ -389,7 +422,7 @@ export class AdminsController {
 
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(DEPOSIT_GET)
+  @Permission([DEPOSIT_CRUD, DEPOSIT_GET])
   @Post('deposits/list-for-datatable')
   @AuthApiError()
   async getListDepositDatatableForAdmin(
@@ -433,7 +466,7 @@ export class AdminsController {
 
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permission(DEPOSIT_GET)
+  @Permission([DEPOSIT_CRUD, DEPOSIT_GET])
   @Post('deposits/list-for-export')
   @AuthApiError()
   async getListDepositExportForAdmin(@Body() params: DepositListingForExport) {
@@ -456,7 +489,7 @@ export class AdminsController {
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Permission(DEPOSIT_CRUD)
+  @Permission([DEPOSIT_CRUD, DEPOSIT_GET])
   @Get('deposits/:depositId')
   @AuthApiError()
   @ApiOkResponse({
@@ -469,7 +502,7 @@ export class AdminsController {
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Permission(DEPOSIT_CRUD)
+  @Permission([DEPOSIT_CRUD, DEPOSIT_RESEND_CALLBACK])
   @Post('deposits/:depositId/resend-callback')
   @AuthApiError()
   @ApiCreatedResponse({
@@ -481,7 +514,7 @@ export class AdminsController {
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Permission(DEPOSIT_CRUD)
+  @Permission([DEPOSIT_CRUD, DEPOSIT_MANUAL])
   @Post('deposits/:depositId/manual-deposit')
   @AuthApiError()
   @ApiCreatedResponse({
@@ -501,7 +534,7 @@ export class AdminsController {
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Permission(DEPOSIT_CRUD)
+  @Permission([DEPOSIT_CRUD, DEPOSIT_MANUAL])
   @Post('deposits/:depositId/manual-deposits')
   @AuthApiError()
   @ApiCreatedResponse({
@@ -521,7 +554,7 @@ export class AdminsController {
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Permission(DEPOSIT_CRUD)
+  @Permission([DEPOSIT_CRUD, DEPOSIT_VERIFY])
   @Post('deposits/:depositId/verify-deposit')
   @AuthApiError()
   @ApiCreatedResponse({
@@ -536,7 +569,7 @@ export class AdminsController {
 
   @UseGuards(JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Permission(DEPOSIT_CRUD)
+  @Permission([DEPOSIT_CRUD, DEPOSIT_CREATE])
   @Post('deposits')
   @AuthApiError()
   async createDepositOrder(
@@ -547,7 +580,7 @@ export class AdminsController {
 
   @UseGuards(JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Permission(DEPOSIT_CRUD)
+  @Permission([DEPOSIT_CRUD, DEPOSIT_UPDATE])
   @Put('deposits/:depositId')
   @AuthApiError()
   async updateDepositOrder(
@@ -562,7 +595,7 @@ export class AdminsController {
 
   @UseGuards(JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Permission(DEPOSIT_CRUD)
+  @Permission([DEPOSIT_CRUD, DEPOSIT_DELETE])
   @Delete('deposits/:depositId')
   @AuthApiError()
   async deleteDepositOrder(
@@ -575,7 +608,7 @@ export class AdminsController {
   //Withdrawals
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(WITHDRAWAL_GET)
+  @Permission([WITHDRAWAL_CRUD, WITHDRAWAL_GET])
   @Post('withdrawals/list-for-datatable')
   @AuthApiError()
   async getListWithdrawalDatatableForAdmin(
@@ -617,7 +650,7 @@ export class AdminsController {
 
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(WITHDRAWAL_GET)
+  @Permission([WITHDRAWAL_CRUD, WITHDRAWAL_GET])
   @Post('withdrawals/list-for-export')
   @AuthApiError()
   async getListWithdrawalExportForAdmin(
@@ -640,7 +673,7 @@ export class AdminsController {
   }
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(WITHDRAWAL_CRUD)
+  @Permission([WITHDRAWAL_CRUD, WITHDRAWAL_GET])
   @Get('withdrawals/:withdrawalId')
   @AuthApiError()
   @ApiOkResponse({
@@ -654,7 +687,7 @@ export class AdminsController {
   }
 
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permission(WITHDRAWAL_CRUD)
+  @Permission([WITHDRAWAL_CRUD, WITHDRAWAL_MANUAL])
   @Post('withdrawals/:withdrawalId/manual-withdrawal')
   @AuthApiError()
   @ApiCreatedResponse({
@@ -673,7 +706,7 @@ export class AdminsController {
   }
 
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permission(WITHDRAWAL_CRUD)
+  @Permission([WITHDRAWAL_CRUD, WITHDRAWAL_AUTO, WITHDRAWAL_MULTIPLE_AUTO])
   @Post('withdrawals/:withdrawalId/auto-withdrawal')
   @AuthApiError()
   @ApiCreatedResponse({
@@ -694,7 +727,7 @@ export class AdminsController {
   }
 
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permission(WITHDRAWAL_CRUD)
+  @Permission([WITHDRAWAL_CRUD, WITHDRAWAL_UPDATE_STATUS])
   @Post('withdrawals/:withdrawalId/update-status')
   @AuthApiError()
   @ApiCreatedResponse({
@@ -715,7 +748,7 @@ export class AdminsController {
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Permission(WITHDRAWAL_CRUD)
+  @Permission([WITHDRAWAL_CRUD, WITHDRAWAL_RESEND_CALLBACK])
   @Post('withdrawals/:withdrawalId/resend-callback')
   @AuthApiError()
   @ApiCreatedResponse({
@@ -729,7 +762,7 @@ export class AdminsController {
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Permission(WITHDRAWAL_CREATE)
+  @Permission([WITHDRAWAL_CRUD, WITHDRAWAL_CREATE])
   @Post('withdrawals')
   @AuthApiError()
   @ApiCreatedResponse({
@@ -743,7 +776,7 @@ export class AdminsController {
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Permission(WITHDRAWAL_CRUD)
+  @Permission([WITHDRAWAL_CRUD, WITHDRAWAL_UPDATE])
   @Put('withdrawals/:withdrawalId')
   @AuthApiError()
   @ApiCreatedResponse({
@@ -761,7 +794,7 @@ export class AdminsController {
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Permission(WITHDRAWAL_CRUD)
+  @Permission([WITHDRAWAL_CRUD, WITHDRAWAL_DELETE])
   @Delete('withdrawals/:withdrawalId')
   @AuthApiError()
   @ApiOkResponse({
@@ -777,10 +810,10 @@ export class AdminsController {
     )
   }
 
-  //Transactions
+  //Bank Transactions
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @Permission(TRANSACTION_CRUD)
+  @Permission([BANK_TRANSACTION_CRUD, BANK_TRANSACTION_GET])
   @Get('bank-transactions')
   @AuthApiError()
   @ApiOkResponse({
@@ -795,7 +828,7 @@ export class AdminsController {
 
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(TRANSACTION_GET)
+  @Permission([BANK_TRANSACTION_CRUD, BANK_TRANSACTION_GET])
   @Post('bank-transactions/list-for-datatable')
   @AuthApiError()
   async getListTransactiontDatatableForAdmin(
@@ -838,7 +871,7 @@ export class AdminsController {
 
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(TRANSACTION_GET)
+  @Permission([BANK_TRANSACTION_CRUD, BANK_TRANSACTION_GET])
   @Post('bank-transactions/list-for-export')
   @AuthApiError()
   async transactionListingForExport(
@@ -864,7 +897,7 @@ export class AdminsController {
 
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(TRANSACTION_CRUD)
+  // @Permission([BANK_TRANSACTION_CRUD, BANK_TRANSACTION_GET])
   @Post('bank-transactions/suggest')
   @AuthApiError()
   async suggestTransactions(@Body() params: PagingParams) {
@@ -902,7 +935,7 @@ export class AdminsController {
   }
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(TRANSACTION_CRUD)
+  @Permission([BANK_TRANSACTION_CRUD, BANK_TRANSACTION_GET])
   @Get('bank-transactions/:transactionId')
   @AuthApiError()
   @ApiOkResponse({
@@ -916,7 +949,7 @@ export class AdminsController {
   }
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(TRANSACTION_CRUD)
+  @Permission([BANK_TRANSACTION_CRUD, BANK_TRANSACTION_DELETE])
   @Delete('bank-transactions/:transactionId')
   @AuthApiError()
   async deleteTransactionForAdmin(
@@ -932,7 +965,7 @@ export class AdminsController {
   //Permission
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(PERMISSION_CRUD)
+  @Permission([PERMISSION_CRUD, PERMISSION_GET])
   @Post('permissions/list-for-datatable')
   @AuthApiError()
   async getListPermissionDatatableForAdmin(
@@ -965,7 +998,7 @@ export class AdminsController {
   }
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(PERMISSION_CRUD)
+  @Permission([PERMISSION_CRUD, PERMISSION_GET])
   @Get('permissions')
   @AuthApiError()
   async getListPermissionForAdmin(@Body() params) {
@@ -980,7 +1013,7 @@ export class AdminsController {
   }
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(PERMISSION_CRUD)
+  @Permission([PERMISSION_CRUD, PERMISSION_CREATE])
   @Post('permissions')
   @AuthApiError()
   async createPermissonForAdmin(
@@ -991,7 +1024,7 @@ export class AdminsController {
   }
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(PERMISSION_CRUD)
+  @Permission([PERMISSION_CRUD, PERMISSION_UPDATE])
   @Patch('permissions/:permissionId')
   @AuthApiError()
   async updatePermissionForAdmin(
@@ -1006,7 +1039,7 @@ export class AdminsController {
   }
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(PERMISSION_CRUD)
+  @Permission([PERMISSION_CRUD, PERMISSION_DELETE])
   @Delete('permissions/:permissionId')
   @AuthApiError()
   async deletePermission(
@@ -1019,7 +1052,7 @@ export class AdminsController {
   //Role
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(ROLE_CRUD)
+  @Permission([ROLE_CRUD, ROLE_GET])
   @Post('roles/list-for-datatable')
   @AuthApiError()
   async getListRoleDatatableForAdmin(@Body() datatableParams: DataTableParams) {
@@ -1057,7 +1090,7 @@ export class AdminsController {
   }
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(ROLE_CRUD)
+  @Permission([ROLE_CRUD, ROLE_CREATE])
   @Post('roles')
   @AuthApiError()
   async createRoleForAdmin(
@@ -1068,7 +1101,7 @@ export class AdminsController {
   }
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(ROLE_CRUD)
+  @Permission([ROLE_CRUD, ROLE_UPDATE])
   @Patch('roles/:roleId')
   @AuthApiError()
   async updateRoleForAdmin(
@@ -1080,7 +1113,7 @@ export class AdminsController {
   }
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(ROLE_CRUD)
+  @Permission([ROLE_CRUD, ROLE_DELETE])
   @Delete('roles/:roleId')
   @AuthApiError()
   async deleteRole(@Param('roleId') roleId: string, @Request() req) {
@@ -1150,7 +1183,7 @@ export class AdminsController {
   // Cashouts
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(CASHOUT_GET)
+  @Permission([CASHOUT_CRUD, CASHOUT_GET])
   @Post('cashouts/list-for-datatable')
   @AuthApiError()
   async cashoutListing(@Body() datatableParams: DataTableParams) {
@@ -1181,7 +1214,7 @@ export class AdminsController {
   }
 
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permission(CASHOUT_CRUD)
+  @Permission([CASHOUT_CRUD, CASHOUT_CREATE])
   @Post('cashouts')
   @AuthApiError()
   @ApiCreatedResponse({
@@ -1194,7 +1227,7 @@ export class AdminsController {
   }
 
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permission(CASHOUT_CRUD)
+  @Permission([CASHOUT_CRUD, CASHOUT_UPDATE])
   @Patch('cashouts/:cashoutId')
   @AuthApiError()
   @ApiCreatedResponse({
@@ -1213,7 +1246,7 @@ export class AdminsController {
   }
 
   @UseGuards(JwtAuthGuard, PermissionGuard)
-  @Permission(CASHOUT_CRUD)
+  @Permission([CASHOUT_CRUD, CASHOUT_DELETE])
   @Delete('cashouts/:cashoutId')
   @AuthApiError()
   @ApiCreatedResponse({
