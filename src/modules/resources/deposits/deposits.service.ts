@@ -24,7 +24,7 @@ import {
 } from '@/utils/common'
 import moment from 'moment'
 import { ConfigService } from '@nestjs/config'
-import { OrderStatus } from '@/modules/common/dto/general.dto'
+import { DepositOrderType, OrderStatus } from '@/modules/common/dto/general.dto'
 import { GetSummaryQueriesDto } from '@/modules/aggregators/admins/dto/admin-request.dto'
 import { SettingsService } from '../settings/settings.service'
 import { NotificationsService } from '@/modules/shared/notifications/notifications.service'
@@ -36,7 +36,7 @@ import {
 import { VicaAdaptersService } from '@/modules/adapters/vica-adapters/vica-adapters.service'
 import { Setting } from '../settings/settings.interface'
 import { VirtualType } from '@/modules/resources/settings/dto/general.dto'
-import { TransactionsService } from '@/modules/resources/transactions/transactions.service'
+import { BankTransactionsService } from '@/modules/resources/transactions/bank-transactions.service'
 
 @Injectable()
 export class DepositsService implements OnModuleInit {
@@ -63,7 +63,7 @@ export class DepositsService implements OnModuleInit {
     private readonly notificationsService: NotificationsService,
     private readonly virtualTransactionsService: VirtualTransactionsService,
     private readonly vicaAdaptersService: VicaAdaptersService,
-    private readonly transactionsService: TransactionsService
+    private readonly bankTransactionsService: BankTransactionsService
   ) {}
 
   async onModuleInit() {
@@ -194,14 +194,12 @@ export class DepositsService implements OnModuleInit {
       if (length === -1) {
         return await this.depositOrderModel
           .find(filter)
-          .populate('transaction')
-          .populate('transactions')
+          .populate('bankTransactions')
           .sort(sortObj)
       }
       return await this.depositOrderModel
         .find(filter)
-        .populate('transaction')
-        .populate('transactions')
+        .populate('bankTransactions')
         .sort(sortObj)
         .limit(length)
         .skip(start)
@@ -231,8 +229,8 @@ export class DepositsService implements OnModuleInit {
     const deposit = await this.depositOrderModel.findById(depositId)
 
     let transaction = null
-    if (deposit.transactions.length > 0) {
-      transaction = await this.transactionsService.getTransactionByOrderId(
+    if (deposit.orderType === DepositOrderType.BANK) {
+      transaction = await this.bankTransactionsService.getTransactionByOrderId(
         depositId
       )
     } else {
@@ -278,8 +276,8 @@ export class DepositsService implements OnModuleInit {
     const updateData = {
       actualAmount,
       fee,
-      transaction: transactionId,
-      transactions: [transactionId],
+      // transaction: transactionId,
+      bankTransactions: [transactionId],
       status: OrderStatus.Succeed,
       isManual: true,
       manualBy: username,
@@ -300,9 +298,8 @@ export class DepositsService implements OnModuleInit {
       throw new HttpException('Cannot manual deposit', HttpStatus.BAD_REQUEST)
     }
 
-    const transaction = await this.transactionsService.getTransactionByOrderId(
-      depositId
-    )
+    const transaction =
+      await this.bankTransactionsService.getTransactionByOrderId(depositId)
 
     this.sendDepositCallback(
       deposit.callback,
@@ -321,7 +318,6 @@ export class DepositsService implements OnModuleInit {
     ref: ${deposit.ref}%0A
     amount: ${deposit.amount.toLocaleString()}%0A
     actualAmount: ${deposit.actualAmount.toLocaleString()}%0A
-    transaction: ${deposit.transaction}%0A
     username: ${username}`
 
     this.notificationsService.sendTelegramMessage(
@@ -349,7 +345,7 @@ export class DepositsService implements OnModuleInit {
     const updateData = {
       actualAmount,
       fee,
-      transactions: transactionIds,
+      bankTransactions: transactionIds,
       status: OrderStatus.Succeed,
       isManual: true,
       manualBy: username,
@@ -370,9 +366,8 @@ export class DepositsService implements OnModuleInit {
       throw new HttpException('Cannot manual deposit', HttpStatus.BAD_REQUEST)
     }
 
-    const transaction = await this.transactionsService.getTransactionByOrderId(
-      depositId
-    )
+    const transaction =
+      await this.bankTransactionsService.getTransactionByOrderId(depositId)
 
     this.sendDepositCallback(
       deposit.callback,
@@ -391,7 +386,6 @@ export class DepositsService implements OnModuleInit {
     ref: ${deposit.ref}%0A
     amount: ${deposit.amount.toLocaleString()}%0A
     actualAmount: ${deposit.actualAmount.toLocaleString()}%0A
-    transactions: ${deposit.transactions}%0A
     username: ${username}`
 
     this.notificationsService.sendTelegramMessage(
@@ -407,7 +401,7 @@ export class DepositsService implements OnModuleInit {
     )}`
 
     const updateData = {
-      status: OrderStatus.Verifying,
+      status: OrderStatus.Succeed,
       note
     }
 
@@ -428,7 +422,6 @@ export class DepositsService implements OnModuleInit {
     ref: ${deposit.ref}%0A
     amount: ${deposit.amount.toLocaleString()}%0A
     actualAmount: ${deposit.actualAmount.toLocaleString()}%0A
-    transaction: ${deposit.transaction}%0A
     username: ${username}`
 
     this.notificationsService.sendTelegramMessage(
@@ -537,7 +530,8 @@ export class DepositsService implements OnModuleInit {
         const newOrder = new this.depositOrderModel({
           ...createDepositOrderDto,
           code,
-          hashId
+          hashId,
+          orderType: DepositOrderType.BANK
         })
 
         await newOrder.save()
@@ -584,6 +578,7 @@ export class DepositsService implements OnModuleInit {
           newOrder = await this.depositOrderModel.create({
             code: code,
             hashId,
+            orderType: DepositOrderType.VIRTUAL,
             ...createDepositOrderDto
           })
           attempts = 4
@@ -603,8 +598,8 @@ export class DepositsService implements OnModuleInit {
           refId: newOrder.ref,
           serviceCode: VirtualServiceCode.COLLECTCASH,
           amount: newOrder.amount,
-          returnUrl: createDepositOrderDto.callback,
-          cancelUrl: createDepositOrderDto.callback
+          returnUrl: createDepositOrderDto.callbackUrl,
+          cancelUrl: createDepositOrderDto.callbackUrl
         })
 
       const virtualTypeSelected = createDepositOrderDto.type
@@ -747,8 +742,7 @@ export class DepositsService implements OnModuleInit {
       const settings = await this.settingsService.getSettings()
       const fee = settings.depositFeeFlat + amount * settings.depositFeePct
       tx.status = OrderStatus.Succeed
-      tx.transaction = txId
-      tx.transactions = [txId]
+      tx.bankTransactions = [txId]
       tx.actualAmount = amount
       tx.fee = fee
       if (amount != tx.amount) {
@@ -756,7 +750,7 @@ export class DepositsService implements OnModuleInit {
       }
       await tx.save()
       const transaction =
-        await this.transactionsService.getTransactionByOrderId(tx.id)
+        await this.bankTransactionsService.getTransactionByOrderId(tx.id)
       this.sendDepositCallback(
         tx.callback,
         'DEPOSIT',
@@ -781,7 +775,7 @@ export class DepositsService implements OnModuleInit {
     orderCode: string,
     orderStatus: string,
     orderAmount: number,
-    reason: string = '',
+    reason = '',
     bankAccountNo: string = null
   ) {
     const bodyData = {

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { OrderStatus } from '../../common/dto/general.dto'
+import { DepositOrderType, OrderStatus } from '../../common/dto/general.dto'
 import MongooseDelete from 'mongoose-delete'
 const { ObjectId } = mongoose.Schema.Types
 
@@ -12,6 +12,11 @@ export const DepositSchema = new mongoose.Schema(
     actualAmount: {
       type: Number,
       required: false
+    },
+    orderType: {
+      type: String,
+      enum: DepositOrderType,
+      required: true
     },
     code: {
       type: String,
@@ -41,12 +46,12 @@ export const DepositSchema = new mongoose.Schema(
     },
     transaction: {
       type: ObjectId,
-      ref: 'Transaction',
+      ref: 'BankTransaction',
       required: false
     },
-    transactions: {
+    bankTransactions: {
       type: [ObjectId],
-      ref: 'Transaction',
+      ref: 'BankTransaction',
       required: false
     },
     virtualTransactions: {

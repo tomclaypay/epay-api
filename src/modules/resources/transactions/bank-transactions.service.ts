@@ -4,13 +4,14 @@ import { Model } from 'mongoose'
 import {
   CreateTransactionDto,
   GetTransactionsQueriesDto
-} from './dto/transaction-request.dto'
-import { Transaction } from './transactions.interface'
+} from './dto/bank-transactions-request.dto'
+import { BankTransaction } from '@/modules/resources/transactions/bank-transactions.interface'
 
 @Injectable()
-export class TransactionsService {
+export class BankTransactionsService {
   constructor(
-    @InjectModel('Transaction') private transactionModel: Model<Transaction>
+    @InjectModel('BankTransaction')
+    private transactionModel: Model<BankTransaction>
   ) {}
 
   async createTransaction(createTransactionDto: CreateTransactionDto) {

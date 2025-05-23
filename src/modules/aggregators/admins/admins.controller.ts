@@ -60,7 +60,8 @@ import {
   ManualDepositDto,
   DepositListingForExport,
   ManualDepositsDto,
-  CreateDepositOrderDto
+  CreateDepositOrderDto,
+  UpdateDepositOrderDto
 } from '../../resources/deposits/dto/deposit-request.dto'
 import {
   GetDepositsResponse,
@@ -74,11 +75,11 @@ import { RoleUpdateDto } from '../../resources/role/dto/role-update'
 import {
   GetTransactionsQueriesDto,
   TransactionListing
-} from '../../resources/transactions/dto/transaction-request.dto'
+} from '../../resources/transactions/dto/bank-transactions-request.dto'
 import {
   GetTransactionsResponse,
   TransactionDetail
-} from '../../resources/transactions/dto/transaction-response.dto'
+} from '../../resources/transactions/dto/bank-transaction-response.dto'
 import {
   GetUsersQueriesDto,
   LoginDto,
@@ -402,7 +403,7 @@ export class AdminsController {
       datatableParams.status,
       null,
       null,
-      datatableParams.transactionType,
+      datatableParams.type,
       params.start,
       params.length,
       params.orderBy,
@@ -415,7 +416,7 @@ export class AdminsController {
       datatableParams.status,
       null,
       null,
-      datatableParams.transactionType,
+      datatableParams.type,
       null,
       null,
       null,
@@ -536,7 +537,7 @@ export class AdminsController {
   @UseGuards(JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Permission(DEPOSIT_CRUD)
-  @Post('deposit')
+  @Post('deposits')
   @AuthApiError()
   async createDepositOrder(
     @Body() createDepositOrderDto: CreateDepositOrderDto
@@ -547,7 +548,22 @@ export class AdminsController {
   @UseGuards(JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Permission(DEPOSIT_CRUD)
-  @Delete('deposit/:depositId')
+  @Put('deposits/:depositId')
+  @AuthApiError()
+  async updateDepositOrder(
+    @Param('depositId') depositId: string,
+    @Body() updateDepositOrderDto: UpdateDepositOrderDto
+  ) {
+    return this.adminsService.updateDepositOrder(
+      depositId,
+      updateDepositOrderDto
+    )
+  }
+
+  @UseGuards(JwtAuthGuard, PermissionGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @Permission(DEPOSIT_CRUD)
+  @Delete('deposits/:depositId')
   @AuthApiError()
   async deleteDepositOrder(
     @Param('depositId') depositId: string,
@@ -765,10 +781,10 @@ export class AdminsController {
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Permission(TRANSACTION_CRUD)
-  @Get('transactions')
+  @Get('bank-transactions')
   @AuthApiError()
   @ApiOkResponse({
-    description: 'Get transactions successful',
+    description: 'Get bank transactions successful',
     type: GetTransactionsResponse
   })
   async getTransactionsForAdmin(
@@ -780,7 +796,7 @@ export class AdminsController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @Permission(TRANSACTION_GET)
-  @Post('transactions/list-for-datatable')
+  @Post('bank-transactions/list-for-datatable')
   @AuthApiError()
   async getListTransactiontDatatableForAdmin(
     @Body() datatableParams: TransactionListing
@@ -823,7 +839,7 @@ export class AdminsController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @Permission(TRANSACTION_GET)
-  @Post('transactions/list-for-export')
+  @Post('bank-transactions/list-for-export')
   @AuthApiError()
   async transactionListingForExport(
     @Body() datatableParams: TransactionListing
@@ -849,7 +865,7 @@ export class AdminsController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @Permission(TRANSACTION_CRUD)
-  @Post('transactions/suggest')
+  @Post('bank-transactions/suggest')
   @AuthApiError()
   async suggestTransactions(@Body() params: PagingParams) {
     const { page = 0, length = 20, keyword } = params
@@ -887,7 +903,7 @@ export class AdminsController {
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @Permission(TRANSACTION_CRUD)
-  @Get('transactions/:transactionId')
+  @Get('bank-transactions/:transactionId')
   @AuthApiError()
   @ApiOkResponse({
     description: 'Get transaction detail successful',
@@ -901,7 +917,7 @@ export class AdminsController {
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
   @Permission(TRANSACTION_CRUD)
-  @Delete('transactions/:transactionId')
+  @Delete('bank-transactions/:transactionId')
   @AuthApiError()
   async deleteTransactionForAdmin(
     @Param('transactionId') transactionId: string,

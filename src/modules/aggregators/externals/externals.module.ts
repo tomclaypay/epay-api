@@ -3,7 +3,7 @@ import { AuthModule } from '../../resources/auth/auth.module'
 import { BanksModule } from '../../resources/banks/banks.module'
 import { DepositsModule } from '../../resources/deposits/deposits.module'
 import { SettingsModule } from '../../resources/settings/settings.module'
-import { TransactionsModule } from '../../resources/transactions/transactions.module'
+import { BankTransactionsModule } from '../../resources/transactions/bank-transactions.module'
 import { UsersModule } from '../../resources/users/users.module'
 import { WithdrawalsModule } from '../../resources/withdrawals/withdrawals.module'
 import { ExternalsController } from './externals.controller'
@@ -18,7 +18,7 @@ import { VicaAdaptersModule } from '@/modules/adapters/vica-adapters/vica-adapte
     DepositsModule,
     WithdrawalsModule,
     BanksModule,
-    TransactionsModule,
+    BankTransactionsModule,
     SettingsModule,
     VirtualTransactionsModule,
     VicaAdaptersModule

@@ -6,7 +6,6 @@ import {
   GetDepositsQueriesDto
 } from '../../resources/deposits/dto/deposit-request.dto'
 import { SettingsService } from '../../resources/settings/settings.service'
-import { TransactionsService } from '../../resources/transactions/transactions.service'
 import {
   CreateWithdrawalOrderDto,
   GetWithdrawalsQueriesDto
@@ -21,6 +20,7 @@ import {
 import { VicaAdaptersService } from '@/modules/adapters/vica-adapters/vica-adapters.service'
 import { ConfigService } from '@nestjs/config'
 import { pick } from 'lodash'
+import { BankTransactionsService } from '@/modules/resources/transactions/bank-transactions.service'
 
 @Injectable()
 export class ExternalsService implements OnModuleInit {
@@ -34,7 +34,6 @@ export class ExternalsService implements OnModuleInit {
     private banksService: BanksService,
     private depositsService: DepositsService,
     private withdrawalsService: WithdrawalsService,
-    private transactionsService: TransactionsService,
     private settingsService: SettingsService,
     private virtualTransactionsService: VirtualTransactionsService,
     private vicaAdaptersService: VicaAdaptersService
@@ -74,8 +73,10 @@ export class ExternalsService implements OnModuleInit {
   async createWithdrawalOrderForExternal(
     createWithdrawalOrderDto: CreateWithdrawalOrderDto
   ) {
-     //Delete spaces
-    createWithdrawalOrderDto.mt5Id = createWithdrawalOrderDto.mt5Id.trim().split('\t')[0]
+    //Delete spaces
+    createWithdrawalOrderDto.mt5Id = createWithdrawalOrderDto.mt5Id
+      .trim()
+      .split('\t')[0]
 
     const withdrawalOrder = await this.withdrawalsService.createWithdrawalOrder(
       createWithdrawalOrderDto

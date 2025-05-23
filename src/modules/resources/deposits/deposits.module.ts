@@ -6,7 +6,7 @@ import { DepositSchema } from './deposits.schema'
 import { DepositsService } from './deposits.service'
 import { VicaAdaptersModule } from '@/modules/adapters/vica-adapters/vica-adapters.module'
 import { VirtualTransactionsModule } from '../virtual-transactions/virtual-transactions.module'
-import { TransactionsModule } from '@/modules/resources/transactions/transactions.module'
+import { BankTransactionsModule } from '@/modules/resources/transactions/bank-transactions.module'
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { TransactionsModule } from '@/modules/resources/transactions/transaction
     NotificationsModule,
     VicaAdaptersModule,
     VirtualTransactionsModule,
-    TransactionsModule
+    BankTransactionsModule
   ],
   providers: [DepositsService],
   exports: [DepositsService],

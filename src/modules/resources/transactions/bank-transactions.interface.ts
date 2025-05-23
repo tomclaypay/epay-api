@@ -1,7 +1,7 @@
 import { Document, ObjectId } from 'mongoose'
 import { TransactionType } from '../../common/dto/general.dto'
 
-export interface Transaction extends Document {
+export interface BankTransaction extends Document {
   bankName: string
   bankAccount: string
   transactionType: TransactionType

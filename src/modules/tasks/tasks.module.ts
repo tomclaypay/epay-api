@@ -3,7 +3,6 @@ import { ScheduleModule } from '@nestjs/schedule'
 import { BanksModule } from '../resources/banks/banks.module'
 import { DepositsModule } from '../resources/deposits/deposits.module'
 import { SettingsModule } from '../resources/settings/settings.module'
-import { TransactionsModule } from '../resources/transactions/transactions.module'
 import { WithdrawalsModule } from '../resources/withdrawals/withdrawals.module'
 import { NotificationsModule } from '../shared/notifications/notifications.module'
 import { TasksService } from './tasks.service'
@@ -13,12 +12,13 @@ import { VirtualTransactionsModule } from '../resources/virtual-transactions/vir
 import { SummaryCacheModule } from '@/modules/resources/summary-caches/summary-cache.module'
 import { CashoutsModule } from '@/modules/resources/cashouts/cashouts.module'
 import { RefreshTokensModule } from '@/modules/resources/refresh-token/refresh-token.module'
+import { BankTransactionsModule } from '@/modules/resources/transactions/bank-transactions.module'
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
     BanksModule,
-    TransactionsModule,
+    BankTransactionsModule,
     DepositsModule,
     WithdrawalsModule,
     SettingsModule,

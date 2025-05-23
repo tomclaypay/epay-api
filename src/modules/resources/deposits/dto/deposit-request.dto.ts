@@ -45,7 +45,7 @@ export class CreateDepositOrderDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  callback: string
+  callbackUrl: string
 }
 
 export class UpdateDepositOrderDto {
@@ -95,7 +95,7 @@ export class DepositListing extends DataTableParams {
 
   @ApiProperty()
   @IsOptional()
-  transactionType: string
+  type: string
 }
 export class DepositListingForExport extends DataTableParams {
   @ApiProperty()

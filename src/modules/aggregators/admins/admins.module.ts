@@ -5,7 +5,6 @@ import { BanksModule } from '../../resources/banks/banks.module'
 import { DepositsModule } from '../../resources/deposits/deposits.module'
 import { PermissionModule } from '../../resources/permission/permission.module'
 import { RoleModule } from '../../resources/role/role.module'
-import { TransactionsModule } from '../../resources/transactions/transactions.module'
 import { UsersModule } from '../../resources/users/users.module'
 import { AdminsController } from './admins.controller'
 import { AdminsService } from './admins.service'
@@ -16,6 +15,7 @@ import { VicaAdaptersModule } from '@/modules/adapters/vica-adapters/vica-adapte
 import { VirtualTransactionsModule } from '@/modules/resources/virtual-transactions/virtual-transactions.module'
 import { SummaryCacheModule } from '@/modules/resources/summary-caches/summary-cache.module'
 import { RefreshTokensModule } from '@/modules/resources/refresh-token/refresh-token.module'
+import { BankTransactionsModule } from '@/modules/resources/transactions/bank-transactions.module'
 
 @Module({
   imports: [
@@ -23,7 +23,7 @@ import { RefreshTokensModule } from '@/modules/resources/refresh-token/refresh-t
     UsersModule,
     DepositsModule,
     BanksModule,
-    TransactionsModule,
+    BankTransactionsModule,
     CashoutsModule,
     PermissionModule,
     RoleModule,

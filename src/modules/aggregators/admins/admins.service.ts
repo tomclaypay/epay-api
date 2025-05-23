@@ -18,7 +18,8 @@ import {
   CreateDepositOrderDto,
   GetDepositsQueriesDto,
   ManualDepositDto,
-  ManualDepositsDto
+  ManualDepositsDto,
+  UpdateDepositOrderDto
 } from '../../resources/deposits/dto/deposit-request.dto'
 import { PermissionCreateDto } from '../../resources/permission/dto/permission-create'
 import { PermissionUpdateDto } from '../../resources/permission/dto/permission-update'
@@ -32,8 +33,7 @@ import { SettingsService } from '../../resources/settings/settings.service'
 import {
   CreateTransactionDto,
   GetTransactionsQueriesDto
-} from '../../resources/transactions/dto/transaction-request.dto'
-import { TransactionsService } from '../../resources/transactions/transactions.service'
+} from '../../resources/transactions/dto/bank-transactions-request.dto'
 import {
   GetUsersQueriesDto,
   CreateUserDto,
@@ -69,6 +69,7 @@ import { randomInt } from 'crypto'
 import moment from 'moment'
 import { SummaryCachesService } from '@/modules/resources/summary-caches/summary-cache.service'
 import { RefreshTokensService } from '@/modules/resources/refresh-token/refresh-token.service'
+import { BankTransactionsService } from '@/modules/resources/transactions/bank-transactions.service'
 
 @Injectable()
 export class AdminsService implements OnModuleInit {
@@ -86,7 +87,7 @@ export class AdminsService implements OnModuleInit {
     private banksService: BanksService,
     private depositsService: DepositsService,
     private withdrawalsService: WithdrawalsService,
-    private transactionsService: TransactionsService,
+    private bankTransactionsService: BankTransactionsService,
     private cashoutsService: CashoutsService,
     private permissionsService: PermissionService,
     private rolesService: RoleService,
@@ -277,7 +278,7 @@ export class AdminsService implements OnModuleInit {
     )
 
     const transaction =
-      await this.transactionsService.getTransactionDetailForAdmin(
+      await this.bankTransactionsService.getTransactionDetailForAdmin(
         manualDepositDto.transactionId
       )
     transaction.deposit = deposit.id
@@ -304,7 +305,7 @@ export class AdminsService implements OnModuleInit {
 
     manualDepositsDto.transactionIds.map(async (transactionId) => {
       const transaction =
-        await this.transactionsService.getTransactionDetailForAdmin(
+        await this.bankTransactionsService.getTransactionDetailForAdmin(
           transactionId
         )
       transaction.deposit = deposit.id
@@ -331,6 +332,16 @@ export class AdminsService implements OnModuleInit {
           settings
         )
     }
+  }
+
+  async updateDepositOrder(
+    depositId: string,
+    updateDepositOrderDto: UpdateDepositOrderDto
+  ) {
+    return this.depositsService.updateDepositOrder(
+      depositId,
+      updateDepositOrderDto
+    )
   }
 
   async deleteDeposit(depositId: string, userId: string) {
@@ -400,7 +411,7 @@ export class AdminsService implements OnModuleInit {
       manualAt: new Date(),
       data
     }
-    const bankTx = await this.transactionsService.createTransaction(
+    const bankTx = await this.bankTransactionsService.createTransaction(
       createTransactionDto
     )
 
@@ -630,7 +641,7 @@ export class AdminsService implements OnModuleInit {
   async getTransactionsForAdmin(
     getTransactionsQueriesDto: GetTransactionsQueriesDto
   ) {
-    return this.transactionsService.getTransactionsForAdmin(
+    return this.bankTransactionsService.getTransactionsForAdmin(
       getTransactionsQueriesDto
     )
   }
@@ -647,7 +658,7 @@ export class AdminsService implements OnModuleInit {
     sortBy,
     sortType
   ) {
-    return this.transactionsService.transactionListing(
+    return this.bankTransactionsService.transactionListing(
       isCounting,
       keyword,
       type,
@@ -662,11 +673,13 @@ export class AdminsService implements OnModuleInit {
   }
 
   async getTransactionDetailForAdmin(transactionId: string) {
-    return this.transactionsService.getTransactionDetailForAdmin(transactionId)
+    return this.bankTransactionsService.getTransactionDetailForAdmin(
+      transactionId
+    )
   }
 
   async deleteTransactionForAdmin(transactionId: string, userId: string) {
-    return this.transactionsService.deleteTransaction(transactionId, userId)
+    return this.bankTransactionsService.deleteTransaction(transactionId, userId)
   }
 
   //Permissons

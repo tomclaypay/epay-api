@@ -10,3 +10,9 @@ export enum OrderStatus {
   Canceled = 'CANCELED',
   Failed = 'FAILED'
 }
+
+export enum DepositOrderType {
+  BANK = 'BANK',
+  CARD = 'CARD',
+  VIRTUAL = 'VIRTUAL'
+}

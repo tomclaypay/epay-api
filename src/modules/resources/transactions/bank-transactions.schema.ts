@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 import MongooseDelete from 'mongoose-delete'
 const { ObjectId } = mongoose.Schema.Types
 
-export const TransactionSchema = new mongoose.Schema(
+export const BankTransactionSchema = new mongoose.Schema(
   {
     bankName: {
       type: String,
@@ -84,7 +84,7 @@ export const TransactionSchema = new mongoose.Schema(
   }
 )
 
-TransactionSchema.set('toJSON', {
+BankTransactionSchema.set('toJSON', {
   virtuals: true,
   versionKey: false,
   transform: function (doc, ret) {
@@ -93,7 +93,7 @@ TransactionSchema.set('toJSON', {
   }
 })
 
-TransactionSchema.plugin(MongooseDelete, {
+BankTransactionSchema.plugin(MongooseDelete, {
   deletedAt: true,
   deletedBy: true,
   deletedByType: ObjectId,
