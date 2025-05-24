@@ -426,13 +426,13 @@ export class WithdrawalsService implements OnModuleInit {
         return await this.withdrawalModel
           .find(filter)
           .populate('transaction')
-          .populate('virtualTransactions')
+          .populate('virtualTransaction')
           .sort(sortObj)
       }
       return await this.withdrawalModel
         .find(filter)
         .populate('transaction')
-        .populate('virtualTransactions')
+        .populate('virtualTransaction')
         .sort(sortObj)
         .limit(length)
         .skip(start)
