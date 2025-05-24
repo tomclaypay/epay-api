@@ -176,6 +176,7 @@ export class WithdrawalsService implements OnModuleInit {
       bankAccountSrc,
       fee,
       transaction: transactionId,
+      virtualTransactions: [transactionId],
       status: OrderStatus.Succeed,
       isManual: true,
       manualBy: username,
@@ -300,6 +301,7 @@ export class WithdrawalsService implements OnModuleInit {
 
       tx.status = OrderStatus.Succeed
       tx.transaction = txId
+      tx.virtualTransactions = [txId]
       tx.fee = fee
       await tx.save()
       return tx

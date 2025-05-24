@@ -164,13 +164,7 @@ export class DepositsService implements OnModuleInit {
         filter['status'] = status
       }
       if (type !== '-1') {
-        if (type === 'VIRTUAL') {
-          filter['virtualTransactions'] = { $exists: true, $ne: [] }
-        }
-
-        if (type === 'BANK') {
-          filter['transactions'] = { $exists: true, $ne: [] }
-        }
+        filter['orderType'] = type
       }
 
       if (startDate) {
@@ -194,11 +188,13 @@ export class DepositsService implements OnModuleInit {
       if (length === -1) {
         return await this.depositOrderModel
           .find(filter)
+          .populate('transaction')
           .populate('bankTransactions')
           .sort(sortObj)
       }
       return await this.depositOrderModel
         .find(filter)
+        .populate('transaction')
         .populate('bankTransactions')
         .sort(sortObj)
         .limit(length)
