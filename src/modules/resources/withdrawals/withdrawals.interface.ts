@@ -13,7 +13,7 @@ export interface Withdrawal extends Document {
   ref: string
   mt5Id: string
   callback: string
-  virtualTransaction: string
+  virtualTransaction: string[]
   transaction: string
   status: OrderStatus
   isManual: boolean

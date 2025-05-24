@@ -50,11 +50,11 @@ export const WithdrawalSchema = new mongoose.Schema(
     },
     transaction: {
       type: ObjectId,
-      ref: 'Transaction',
+      ref: 'VirtualTransaction',
       required: false
     },
     virtualTransaction: {
-      type: ObjectId,
+      type: [ObjectId],
       ref: 'VirtualTransaction',
       required: false
     },

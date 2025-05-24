@@ -72,6 +72,8 @@ import {
   USER_DELETE,
   USER_GET,
   USER_UPDATE,
+  VIRTUAL_TRANSACTION_CRUD,
+  VIRTUAL_TRANSACTION_GET,
   WITHDRAWAL_AUTO,
   WITHDRAWAL_CREATE,
   WITHDRAWAL_CRUD,
@@ -960,6 +962,42 @@ export class AdminsController {
       transactionId,
       req.user._id
     )
+  }
+  //Virtual transactions
+
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
+  @Permission([VIRTUAL_TRANSACTION_CRUD, VIRTUAL_TRANSACTION_GET])
+  @Post('virtual-transactions/list-for-datatable')
+  @AuthApiError()
+  async getListVirtualTransactiontDatatableForAdmin(
+    @Body() datatableParams: TransactionListing
+  ) {
+    const params = datatableParams.getDataTableParams()
+    const listObj =
+      await this.adminsService.getListVirtualTransactionDatatableForAdmin(
+        false,
+        params.keyword,
+        params.start,
+        params.length,
+        params.orderBy,
+        params.orderType
+      )
+    const count =
+      await this.adminsService.getListVirtualTransactionDatatableForAdmin(
+        true,
+        params.keyword,
+        null,
+        null,
+        null,
+        null
+      )
+    return {
+      recordsTotal: count,
+      data: listObj,
+      draw: datatableParams.draw,
+      recordsFiltered: count
+    }
   }
 
   //Permission

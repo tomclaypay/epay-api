@@ -672,6 +672,24 @@ export class AdminsService implements OnModuleInit {
     )
   }
 
+  async getListVirtualTransactionDatatableForAdmin(
+    isCounting,
+    keyword,
+    start,
+    length,
+    sortBy,
+    sortType
+  ) {
+    return this.virtualTransactionsService.virtualTransactionListing(
+      isCounting,
+      keyword,
+      start,
+      length,
+      sortBy,
+      sortType
+    )
+  }
+
   async getTransactionDetailForAdmin(transactionId: string) {
     return this.bankTransactionsService.getTransactionDetailForAdmin(
       transactionId
