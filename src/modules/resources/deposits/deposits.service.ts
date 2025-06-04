@@ -594,8 +594,8 @@ export class DepositsService implements OnModuleInit {
           refId: newOrder.ref,
           serviceCode: VirtualServiceCode.COLLECTCASH,
           amount: newOrder.amount,
-          returnUrl: createDepositOrderDto.callbackUrl,
-          cancelUrl: createDepositOrderDto.callbackUrl
+          returnUrl: createDepositOrderDto.callback,
+          cancelUrl: createDepositOrderDto.callback
         })
 
       const virtualTypeSelected = createDepositOrderDto.type

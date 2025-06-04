@@ -45,7 +45,7 @@ export class CreateDepositOrderDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  callbackUrl: string
+  callback: string
 }
 
 export class UpdateDepositOrderDto {
