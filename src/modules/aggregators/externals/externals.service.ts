@@ -20,7 +20,8 @@ import {
 import { VicaAdaptersService } from '@/modules/adapters/vica-adapters/vica-adapters.service'
 import { ConfigService } from '@nestjs/config'
 import { pick } from 'lodash'
-import { BankTransactionsService } from '@/modules/resources/transactions/bank-transactions.service'
+import { CustomerWalletsService } from '@/modules/resources/customer-wallets/customer-wallets.service'
+import { GetWalletAddressByCustomerIdDto } from '@/modules/resources/customer-wallets/dto/customer-wallets.dto'
 
 @Injectable()
 export class ExternalsService implements OnModuleInit {
@@ -36,7 +37,8 @@ export class ExternalsService implements OnModuleInit {
     private withdrawalsService: WithdrawalsService,
     private settingsService: SettingsService,
     private virtualTransactionsService: VirtualTransactionsService,
-    private vicaAdaptersService: VicaAdaptersService
+    private vicaAdaptersService: VicaAdaptersService,
+    private customerWalletsService: CustomerWalletsService
   ) {}
 
   onModuleInit() {
@@ -67,6 +69,14 @@ export class ExternalsService implements OnModuleInit {
 
   async getDepositDetailForExternal(depositId: string) {
     return this.depositsService.getDepositDetailForExternal(depositId)
+  }
+  // Customer Wallet
+  async getCustomerWalletForExternal(
+    getWalletAddressByCustomerIdDto: GetWalletAddressByCustomerIdDto
+  ) {
+    return await this.customerWalletsService.getWalletAddressForCrypto(
+      getWalletAddressByCustomerIdDto
+    )
   }
 
   // Withdrawals

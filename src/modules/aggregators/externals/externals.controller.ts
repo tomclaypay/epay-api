@@ -40,6 +40,7 @@ import {
 } from './dto/deposit-response.dto'
 import { ExternalsService } from './externals.service'
 import { MaintenanceGuard } from '@/modules/resources/auth/maintenance.guard'
+import { GetWalletAddressByCustomerIdDto } from '@/modules/resources/customer-wallets/dto/customer-wallets.dto'
 
 @ApiTags('External')
 @ApiHeader({ name: 'X-API-KEY' })
@@ -74,6 +75,18 @@ export class ExternalsController {
   ) {
     return this.externalsService.createDepositOrderForExternal(
       createDepositOrderDto
+    )
+  }
+
+  @UseGuards(ApiKeyAuthGuard, MaintenanceGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @Post('wallets')
+  @AuthApiError()
+  async getCusstomerWalletForExternal(
+    @Body() getWalletAddressByCustomerIdDto: GetWalletAddressByCustomerIdDto
+  ) {
+    return this.externalsService.getCustomerWalletForExternal(
+      getWalletAddressByCustomerIdDto
     )
   }
 

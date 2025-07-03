@@ -110,11 +110,11 @@ import { RoleUpdateDto } from '../../resources/role/dto/role-update'
 import {
   GetTransactionsQueriesDto,
   TransactionListing
-} from '../../resources/transactions/dto/bank-transactions-request.dto'
+} from '../../resources/bank-transactions/dto/bank-transactions-request.dto'
 import {
   GetTransactionsResponse,
   TransactionDetail
-} from '../../resources/transactions/dto/bank-transaction-response.dto'
+} from '../../resources/bank-transactions/dto/bank-transaction-response.dto'
 import {
   GetUsersQueriesDto,
   LoginDto,

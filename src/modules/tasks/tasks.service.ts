@@ -4,7 +4,7 @@ import fetch from 'node-fetch'
 import { BanksService } from '../resources/banks/banks.service'
 import { ConfigService } from '@nestjs/config'
 import { DepositsService } from '../resources/deposits/deposits.service'
-import { CreateTransactionDto } from '../resources/transactions/dto/bank-transactions-request.dto'
+import { CreateTransactionDto } from '../resources/bank-transactions/dto/bank-transactions-request.dto'
 import { OrderStatus, TransactionType } from '../common/dto/general.dto'
 import { WithdrawalsService } from '../resources/withdrawals/withdrawals.service'
 import { SettingsService } from '../resources/settings/settings.service'
@@ -17,7 +17,7 @@ import moment from 'moment'
 import { SummaryCachesService } from '@/modules/resources/summary-caches/summary-cache.service'
 import { CashoutsService } from '@/modules/resources/cashouts/cashouts.service'
 import { RefreshTokensService } from '@/modules/resources/refresh-token/refresh-token.service'
-import { BankTransactionsService } from '@/modules/resources/transactions/bank-transactions.service'
+import { BankTransactionsService } from '@/modules/resources/bank-transactions/bank-transactions.service'
 
 @Injectable()
 export class TasksService implements OnModuleInit {

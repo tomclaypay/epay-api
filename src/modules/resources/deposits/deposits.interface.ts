@@ -3,7 +3,14 @@ import { DepositOrderType, OrderStatus } from '../../common/dto/general.dto'
 
 export interface Deposit extends Document {
   amount: number
+  customerWallet: string
+  upayOrderRef: string
   actualAmount: number
+  usdtActualAmount: number
+  exchangeRate: number
+  chainName: string
+  txHash: string
+  usdtFee: number
   code: string
   ref: string
   refXendit: string

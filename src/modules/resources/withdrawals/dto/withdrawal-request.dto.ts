@@ -1,3 +1,4 @@
+import { ChainName } from '@/common/const/general'
 import { DataTableParams } from '@/common/params/DataTableParams'
 import { OrderStatus } from '@/modules/common/dto/general.dto'
 import { PaginationQueriesDto } from '@/modules/common/dto/pagination.dto'
@@ -184,4 +185,56 @@ export class UpdateWithdrawalStatusDto {
   @IsString()
   @IsNotEmpty()
   note: string
+}
+
+export class CreateWithdrawalOrderByCryptoDto {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  customerId: string
+
+  @ApiProperty()
+  @IsEnum(ChainName)
+  @IsNotEmpty()
+  chainName: ChainName
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  mt5Id: string
+
+  @ApiProperty()
+  @IsNotEmpty()
+  usdtAmount: number
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  toAddress: string
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  callback: string
+}
+
+export class UpdateWithdrawalOrderByCryptoDto {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  txHash: string
+
+  @ApiProperty()
+  @IsNotEmpty()
+  status: OrderStatus
+
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  usdtFee: number
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  customerWallet: string
 }

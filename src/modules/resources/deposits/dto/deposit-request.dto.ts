@@ -3,6 +3,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import {
   IsArray,
   IsBoolean,
+  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -11,6 +12,7 @@ import {
 } from 'class-validator'
 import { DataTableParams } from '@/common/params/DataTableParams'
 import { OrderStatus } from '@/modules/common/dto/general.dto'
+import { ChainName } from '@/common/const/general'
 
 export class GetDepositsQueriesDto extends PaginationQueriesDto {
   @ApiProperty({
@@ -48,6 +50,52 @@ export class CreateDepositOrderDto {
   callback: string
 }
 
+export class CreateDepositOrderByCryptoDto {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  mt5Id: string
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  customerWallet: string
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  upayOrderRef: string
+
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  usdtAmount: number
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  callback: string
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  status: OrderStatus
+
+  @ApiProperty()
+  @IsOptional()
+  chainName?: ChainName
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  txHash?: string
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  usdtFee?: number
+}
+
 export class UpdateDepositOrderDto {
   @ApiProperty()
   @IsNumber()
@@ -58,6 +106,21 @@ export class UpdateDepositOrderDto {
   @IsNumber()
   @IsOptional()
   fee?: number
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  usdtFee?: number
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  exchangeRate?: number
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  usdtActualAmount?: number
 
   @IsString()
   @IsOptional()

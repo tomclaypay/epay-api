@@ -9,7 +9,24 @@ export const DepositSchema = new mongoose.Schema(
       type: Number,
       required: true
     },
+    customerWallet: {
+      type: ObjectId,
+      ref: 'CustomerWallet',
+      required: false
+    },
+    upayOrderRef: {
+      type: String,
+      required: false
+    },
     actualAmount: {
+      type: Number,
+      required: false
+    },
+    usdtActualAmount: {
+      type: Number,
+      required: false
+    },
+    exchangeRate: {
       type: Number,
       required: false
     },
@@ -40,6 +57,14 @@ export const DepositSchema = new mongoose.Schema(
       required: false,
       unique: true
     },
+    txHash: {
+      type: String,
+      required: false
+    },
+    chainName: {
+      type: String,
+      required: false
+    },
     callback: {
       type: String,
       required: true
@@ -57,6 +82,10 @@ export const DepositSchema = new mongoose.Schema(
     virtualTransactions: {
       type: [ObjectId],
       ref: 'VirtualTransaction',
+      required: false
+    },
+    usdtFee: {
+      type: Number,
       required: false
     },
     fee: {

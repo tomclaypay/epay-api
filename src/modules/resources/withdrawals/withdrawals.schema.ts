@@ -14,25 +14,58 @@ export const WithdrawalSchema = new mongoose.Schema(
     },
     bankNameDest: {
       type: String,
-      required: true
+      required: false
     },
     bankAccountNumberDest: {
       type: String,
-      required: true
+      required: false
     },
     bankAccountNameDest: {
       type: String,
-      required: true
+      required: false
     },
     amount: {
       type: Number,
       required: true
     },
+    customerWallet: {
+      type: ObjectId,
+      ref: 'CustomerWallet',
+      required: false
+    },
+    exchangeRate: {
+      type: Number,
+      required: false
+    },
+    usdtAmount: {
+      type: Number,
+      required: false
+    },
+    toAddress: {
+      type: String,
+      required: false
+    },
+    chainName: {
+      type: String,
+      required: false
+    },
+    txHash: {
+      type: String,
+      required: false
+    },
     fee: {
       type: Number,
       required: false
     },
+    usdtFee: {
+      type: Number,
+      required: false
+    },
     code: {
+      type: String,
+      required: false
+    },
+    upayOrderRef: {
       type: String,
       required: false
     },

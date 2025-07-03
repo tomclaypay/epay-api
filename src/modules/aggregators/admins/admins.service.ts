@@ -33,7 +33,7 @@ import { SettingsService } from '../../resources/settings/settings.service'
 import {
   CreateTransactionDto,
   GetTransactionsQueriesDto
-} from '../../resources/transactions/dto/bank-transactions-request.dto'
+} from '../../resources/bank-transactions/dto/bank-transactions-request.dto'
 import {
   GetUsersQueriesDto,
   CreateUserDto,
@@ -69,7 +69,7 @@ import { randomInt } from 'crypto'
 import moment from 'moment'
 import { SummaryCachesService } from '@/modules/resources/summary-caches/summary-cache.service'
 import { RefreshTokensService } from '@/modules/resources/refresh-token/refresh-token.service'
-import { BankTransactionsService } from '@/modules/resources/transactions/bank-transactions.service'
+import { BankTransactionsService } from '@/modules/resources/bank-transactions/bank-transactions.service'
 
 @Injectable()
 export class AdminsService implements OnModuleInit {

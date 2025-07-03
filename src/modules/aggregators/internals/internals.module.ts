@@ -5,6 +5,7 @@ import { InternalsController } from './internals.controller'
 import { InternalsService } from './internals.service'
 import { SettingsModule } from '@/modules/resources/settings/settings.module'
 import { VirtualTransactionsModule } from '@/modules/resources/virtual-transactions/virtual-transactions.module'
+import { CustomerWalletsModule } from '@/modules/resources/customer-wallets/customer-wallets.module'
 
 @Module({
   imports: [

@@ -1,5 +1,6 @@
-import { OrderStatus } from '@/modules/common/dto/general.dto'
+import { DepositOrderType, OrderStatus } from '@/modules/common/dto/general.dto'
 import { BanksService } from '@/modules/resources/banks/banks.service'
+import { CustomerWalletsService } from '@/modules/resources/customer-wallets/customer-wallets.service'
 import { DepositsService } from '@/modules/resources/deposits/deposits.service'
 import { SettingsService } from '@/modules/resources/settings/settings.service'
 import { VirtualTransactionsService } from '@/modules/resources/virtual-transactions/virtual-transactions.service'
@@ -67,7 +68,8 @@ export class InternalsService implements OnModuleInit {
         'amount',
         'createdAt',
         'updatedAt',
-        'actualAmount'
+        'actualAmount',
+        'orderType'
       )
     }
 
@@ -83,7 +85,6 @@ export class InternalsService implements OnModuleInit {
         virtualTransaction['bankName'] = this.convertBank(
           virtualTransaction.bankCode
         )
-
         resData['banks'] = [
           pick(
             virtualTransaction,
@@ -98,7 +99,6 @@ export class InternalsService implements OnModuleInit {
         if (banks.length == 0) {
           throw new HttpException('Bank not found', HttpStatus.NOT_FOUND)
         }
-
         const bankData = []
         banks.map((bank) =>
           bankData.push(

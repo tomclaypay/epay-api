@@ -14,5 +14,6 @@ export enum OrderStatus {
 export enum DepositOrderType {
   BANK = 'BANK',
   CARD = 'CARD',
-  VIRTUAL = 'VIRTUAL'
+  VIRTUAL = 'VIRTUAL',
+  CRYPTO = 'CRYPTO'
 }

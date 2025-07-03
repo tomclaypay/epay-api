@@ -8,20 +8,16 @@ import { InjectModel } from '@nestjs/mongoose'
 import fetch from 'node-fetch'
 import { randomInt } from 'crypto'
 import * as CryptoJS from 'crypto-js'
-import { pick, find, sumBy } from 'lodash'
+import { pick, find, sumBy, chain } from 'lodash'
 import { Model } from 'mongoose'
 import { Deposit } from './deposits.interface'
 import {
+  CreateDepositOrderByCryptoDto,
   CreateDepositOrderDto,
   GetDepositsQueriesDto,
   UpdateDepositOrderDto
 } from './dto/deposit-request.dto'
-import {
-  fibonacci,
-  generateVietQRURL,
-  sendTelegramMessage,
-  sleep
-} from '@/utils/common'
+import { fibonacci, generateVietQRURL, sleep } from '@/utils/common'
 import moment from 'moment'
 import { ConfigService } from '@nestjs/config'
 import { DepositOrderType, OrderStatus } from '@/modules/common/dto/general.dto'
@@ -36,7 +32,8 @@ import {
 import { VicaAdaptersService } from '@/modules/adapters/vica-adapters/vica-adapters.service'
 import { Setting } from '../settings/settings.interface'
 import { VirtualType } from '@/modules/resources/settings/dto/general.dto'
-import { BankTransactionsService } from '@/modules/resources/transactions/bank-transactions.service'
+import { BankTransactionsService } from '@/modules/resources/bank-transactions/bank-transactions.service'
+import { CustomerWalletsService } from '@/modules/resources/customer-wallets/customer-wallets.service'
 
 @Injectable()
 export class DepositsService implements OnModuleInit {
@@ -63,7 +60,8 @@ export class DepositsService implements OnModuleInit {
     private readonly notificationsService: NotificationsService,
     private readonly virtualTransactionsService: VirtualTransactionsService,
     private readonly vicaAdaptersService: VicaAdaptersService,
-    private readonly bankTransactionsService: BankTransactionsService
+    private readonly bankTransactionsService: BankTransactionsService,
+    private readonly customerWalletsService: CustomerWalletsService
   ) {}
 
   async onModuleInit() {
@@ -245,6 +243,7 @@ export class DepositsService implements OnModuleInit {
       deposit.code,
       deposit.status,
       deposit.actualAmount,
+      deposit.usdtActualAmount ?? 0,
       deposit.note,
       transaction?.bankAccountNo
         ? transaction?.bankAccountNo
@@ -305,6 +304,7 @@ export class DepositsService implements OnModuleInit {
       deposit.code,
       deposit.status,
       deposit.actualAmount,
+      deposit.usdtActualAmount ?? 0,
       deposit.note,
       transaction?.bankAccount
     )
@@ -373,6 +373,7 @@ export class DepositsService implements OnModuleInit {
       deposit.code,
       deposit.status,
       deposit.actualAmount,
+      deposit.usdtActualAmount ?? 0,
       deposit.note,
       transaction.bankAccount
     )
@@ -431,6 +432,7 @@ export class DepositsService implements OnModuleInit {
       deposit.code,
       deposit.status,
       deposit.actualAmount,
+      deposit.usdtActualAmount ?? 0,
       deposit.note
     )
     return {
@@ -507,6 +509,57 @@ export class DepositsService implements OnModuleInit {
       console.log(error)
       return error
     }
+  }
+
+  async createDepositOrderByCrypto(
+    createDepositOrderByCryptoDto: CreateDepositOrderByCryptoDto
+  ) {
+    const settings = await this.settingsService.getSettings()
+    //Delete spaces
+    createDepositOrderByCryptoDto.mt5Id = createDepositOrderByCryptoDto.mt5Id
+      ? createDepositOrderByCryptoDto.mt5Id?.trim().split('\t')[0]
+      : null
+
+    //Round the deposit usdtAmount
+    createDepositOrderByCryptoDto.usdtAmount = Math.floor(
+      createDepositOrderByCryptoDto.usdtAmount
+    )
+
+    const minDepositAmount = settings.minDepositAmount / settings.exchangeRate
+    const maxDepositAmount = settings.maxDepositAmount / settings.exchangeRate
+
+    if (
+      createDepositOrderByCryptoDto.usdtAmount < minDepositAmount ||
+      createDepositOrderByCryptoDto.usdtAmount > maxDepositAmount
+    ) {
+      return
+    }
+    const amount =
+      createDepositOrderByCryptoDto.usdtAmount * settings.exchangeRate
+    let attempts = 0
+    while (attempts < 3) {
+      try {
+        const code = await this.generateCode()
+        const newOrder = new this.depositOrderModel({
+          ...createDepositOrderByCryptoDto,
+          amount,
+          actualAmount: amount,
+          usdtActualAmount: createDepositOrderByCryptoDto.usdtAmount,
+          code,
+          fee: createDepositOrderByCryptoDto.usdtFee * settings.exchangeRate,
+          orderType: DepositOrderType.CRYPTO
+        })
+
+        await newOrder.save()
+
+        return newOrder
+      } catch (error) {
+        console.log(error.message)
+
+        attempts += 1
+      }
+    }
+    return null
   }
 
   async createDepositOrderWithBank(
@@ -755,6 +808,7 @@ export class DepositsService implements OnModuleInit {
         tx.code,
         tx.status,
         tx.actualAmount,
+        tx.usdtActualAmount,
         tx.note,
         transaction?.bankAccount
       )
@@ -771,6 +825,7 @@ export class DepositsService implements OnModuleInit {
     orderCode: string,
     orderStatus: string,
     orderAmount: number,
+    usdtAmount = 0,
     reason = '',
     bankAccountNo: string = null
   ) {
@@ -968,6 +1023,7 @@ export class DepositsService implements OnModuleInit {
           cancelDeposit.code,
           OrderStatus.Canceled,
           cancelDeposit.actualAmount,
+          cancelDeposit.usdtActualAmount ?? 0,
           cancelDeposit.note
         )
       })

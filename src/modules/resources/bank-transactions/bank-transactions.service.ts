@@ -5,7 +5,7 @@ import {
   CreateTransactionDto,
   GetTransactionsQueriesDto
 } from './dto/bank-transactions-request.dto'
-import { BankTransaction } from '@/modules/resources/transactions/bank-transactions.interface'
+import { BankTransaction } from '@/modules/resources/bank-transactions/bank-transactions.interface'
 
 @Injectable()
 export class BankTransactionsService {

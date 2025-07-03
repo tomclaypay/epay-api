@@ -11,8 +11,10 @@ import { OrderStatus } from '../../common/dto/general.dto'
 import { Withdrawal } from './withdrawals.interface'
 import { fibonacci, generateCode, sleep } from '@/utils/common'
 import {
+  CreateWithdrawalOrderByCryptoDto,
   CreateWithdrawalOrderDto,
   GetWithdrawalsQueriesDto,
+  UpdateWithdrawalOrderByCryptoDto,
   UpdateWithdrawalOrderDto
 } from './dto/withdrawal-request.dto'
 import { find, pick, sumBy } from 'lodash'
@@ -20,17 +22,18 @@ import { SettingsService } from '../settings/settings.service'
 import { ConfigService } from '@nestjs/config'
 import { GetSummaryQueriesDto } from '../../aggregators/admins/dto/admin-request.dto'
 import { NotificationsService } from '@/modules/shared/notifications/notifications.service'
-
+import { UpayAdapterService } from '@/modules/adapters/upay/upay.service'
 @Injectable()
 export class WithdrawalsService implements OnModuleInit {
   constructor(
     @InjectModel('Withdrawal') private withdrawalModel: Model<Withdrawal>,
     private readonly settingsService: SettingsService,
     private readonly configService: ConfigService,
-    private readonly notificationsService: NotificationsService
+    private readonly notificationsService: NotificationsService,
+    private readonly upayAdapterService: UpayAdapterService
   ) {}
 
-  async onModuleInit() {}
+  onModuleInit() {}
 
   async createWithdrawalOrder(
     createWithdrawalOrderDto: CreateWithdrawalOrderDto
@@ -80,6 +83,82 @@ export class WithdrawalsService implements OnModuleInit {
     )
   }
 
+  async createWithdrawalOrderByCrypto(
+    createWithdrawalOrderByCryptoDto: CreateWithdrawalOrderByCryptoDto
+  ) {
+    const settings = await this.settingsService.getSettings()
+
+    //Round the withdrawal amount
+    createWithdrawalOrderByCryptoDto.usdtAmount = Math.floor(
+      createWithdrawalOrderByCryptoDto.usdtAmount
+    )
+
+    const minWithdrawalAmount =
+      settings.minWithdrawalAmount / settings.exchangeRate
+    const maxWithdrawalAmount =
+      settings.maxWithdrawalAmount / settings.exchangeRate
+
+    if (
+      createWithdrawalOrderByCryptoDto.usdtAmount < minWithdrawalAmount ||
+      createWithdrawalOrderByCryptoDto.usdtAmount > maxWithdrawalAmount
+    )
+      throw new HttpException(
+        `Withdrawal amount not valid. Amount must be greater than ${minWithdrawalAmount} and less than ${maxWithdrawalAmount}.`,
+        HttpStatus.BAD_REQUEST
+      )
+
+    let attempts = 0
+    const amount =
+      createWithdrawalOrderByCryptoDto.usdtAmount * settings.exchangeRate
+    while (attempts < 3) {
+      try {
+        const code = await generateCode()
+        const newOrder = new this.withdrawalModel({
+          ...createWithdrawalOrderByCryptoDto,
+          amount,
+          code
+        })
+        await newOrder.save()
+
+        const result = await this.upayAdapterService.createWithdrawalOrder(
+          createWithdrawalOrderByCryptoDto.customerId,
+          newOrder.id,
+          createWithdrawalOrderByCryptoDto.toAddress,
+          createWithdrawalOrderByCryptoDto.usdtAmount
+        )
+
+        if (!result.isSucceed) {
+          console.log('Create withdrawal order by upay fail')
+        }
+
+        const updateWithdrawalOrder =
+          await this.withdrawalModel.findByIdAndUpdate(newOrder.id, {
+            upayOrderRef: result.data.orderId
+          })
+
+        return updateWithdrawalOrder
+      } catch (error) {
+        console.log(error.message)
+
+        attempts += 1
+      }
+    }
+    throw new HttpException(
+      'Create wothdrawal order fail',
+      HttpStatus.INTERNAL_SERVER_ERROR
+    )
+  }
+
+  async updateWithdrawalOrderByCrypto(
+    orderId: string,
+    updateWithdrawalOrderByCryptoDto: UpdateWithdrawalOrderByCryptoDto
+  ) {
+    const settings = await this.settingsService.getSettings()
+    return this.withdrawalModel.findByIdAndUpdate(orderId, {
+      ...updateWithdrawalOrderByCryptoDto,
+      fee: updateWithdrawalOrderByCryptoDto.usdtFee * settings.exchangeRate
+    })
+  }
   async updateWithdrawalOrder(
     orderId: string,
     updateWithdrawalOrderDto: UpdateWithdrawalOrderDto
@@ -89,6 +168,10 @@ export class WithdrawalsService implements OnModuleInit {
       updateWithdrawalOrderDto,
       { new: true }
     )
+  }
+
+  async getWithdrawalByUpayOrderRef(upayOrderRef: string) {
+    return this.withdrawalModel.findOne({ upayOrderRef })
   }
 
   async getWithdrawalsForExternal(
@@ -204,6 +287,7 @@ export class WithdrawalsService implements OnModuleInit {
       withdrawal.ref,
       withdrawal.status,
       withdrawal.amount,
+      withdrawal.usdtAmount ?? 0,
       withdrawal.note
     )
 
@@ -262,6 +346,7 @@ export class WithdrawalsService implements OnModuleInit {
       withdrawal.ref,
       withdrawal.status,
       withdrawal.amount,
+      withdrawal.usdtAmount ?? 0,
       withdrawal.note
     )
 
@@ -316,7 +401,8 @@ export class WithdrawalsService implements OnModuleInit {
     orderRef: string,
     orderStatus: string,
     orderAmount: number,
-    reason: string = ''
+    usdtAmount = 0,
+    reason = ''
   ) {
     const bodyData = {
       orderType,
@@ -371,6 +457,7 @@ export class WithdrawalsService implements OnModuleInit {
       withdrawal.ref,
       withdrawal.status,
       withdrawal.amount,
+      withdrawal.usdtAmount ?? 0,
       withdrawal.note
     )
     return {

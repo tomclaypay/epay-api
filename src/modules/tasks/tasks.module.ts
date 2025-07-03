@@ -12,7 +12,7 @@ import { VirtualTransactionsModule } from '../resources/virtual-transactions/vir
 import { SummaryCacheModule } from '@/modules/resources/summary-caches/summary-cache.module'
 import { CashoutsModule } from '@/modules/resources/cashouts/cashouts.module'
 import { RefreshTokensModule } from '@/modules/resources/refresh-token/refresh-token.module'
-import { BankTransactionsModule } from '@/modules/resources/transactions/bank-transactions.module'
+import { BankTransactionsModule } from '@/modules/resources/bank-transactions/bank-transactions.module'
 
 @Module({
   imports: [

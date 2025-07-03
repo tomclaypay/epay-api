@@ -8,6 +8,14 @@ export interface Withdrawal extends Document {
   bankAccountNumberDest: string
   bankAccountNameDest: string
   amount: number
+  customerWallet: string
+  upayOrderRef: string
+  exchangeRate: number
+  usdtAmount: number
+  txHash: string
+  usdtFee: number
+  toAddress: string
+  chainName?: string
   fee: number
   code: string
   ref: string

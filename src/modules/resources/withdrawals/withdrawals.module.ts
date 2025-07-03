@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose'
 import { SettingsModule } from '../settings/settings.module'
 import { WithdrawalSchema } from './withdrawals.schema'
 import { WithdrawalsService } from './withdrawals.service'
+import { UpayAdapterModule } from '@/modules/adapters/upay/upay.module'
 
 @Module({
   imports: [
@@ -11,7 +12,8 @@ import { WithdrawalsService } from './withdrawals.service'
       { name: 'Withdrawal', schema: WithdrawalSchema }
     ]),
     SettingsModule,
-    NotificationsModule
+    NotificationsModule,
+    UpayAdapterModule
   ],
   providers: [WithdrawalsService],
   exports: [WithdrawalsService],

@@ -15,7 +15,7 @@ import { VicaAdaptersModule } from '@/modules/adapters/vica-adapters/vica-adapte
 import { VirtualTransactionsModule } from '@/modules/resources/virtual-transactions/virtual-transactions.module'
 import { SummaryCacheModule } from '@/modules/resources/summary-caches/summary-cache.module'
 import { RefreshTokensModule } from '@/modules/resources/refresh-token/refresh-token.module'
-import { BankTransactionsModule } from '@/modules/resources/transactions/bank-transactions.module'
+import { BankTransactionsModule } from '@/modules/resources/bank-transactions/bank-transactions.module'
 
 @Module({
   imports: [

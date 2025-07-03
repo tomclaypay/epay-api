@@ -6,6 +6,8 @@ export interface Setting extends Document {
   isVpayEnabled: boolean
   isVirtualEnabled: boolean
   isXenditEnabled: boolean
+  isCryptoEnabled: boolean
+  exchangeRate: number
   virtualType: VirtualType
   isAutoWithdrawal: boolean
   depositFeeFlat: number

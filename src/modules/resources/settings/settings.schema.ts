@@ -17,6 +17,13 @@ export const SettingSchema = new mongoose.Schema({
     require: true,
     default: false
   },
+  isCryptoEnabled: {
+    type: Boolean,
+    default: false
+  },
+  exchangeRate: {
+    type: Number
+  },
   virtualType: {
     type: String,
     required: false,
@@ -24,7 +31,6 @@ export const SettingSchema = new mongoose.Schema({
   },
   isXenditEnabled: {
     type: Boolean,
-    required: true,
     default: false
   },
   isAutoWithdrawal: {
