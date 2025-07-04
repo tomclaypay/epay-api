@@ -204,6 +204,11 @@ export class CreateWithdrawalOrderByCryptoDto {
   mt5Id: string
 
   @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  ref: string
+
+  @ApiProperty()
   @IsNotEmpty()
   usdtAmount: number
 

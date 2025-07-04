@@ -7,6 +7,7 @@ import {
 } from '../../resources/deposits/dto/deposit-request.dto'
 import { SettingsService } from '../../resources/settings/settings.service'
 import {
+  CreateWithdrawalOrderByCryptoDto,
   CreateWithdrawalOrderDto,
   GetWithdrawalsQueriesDto
 } from '../../resources/withdrawals/dto/withdrawal-request.dto'
@@ -121,6 +122,14 @@ export class ExternalsService implements OnModuleInit {
       'status',
       'createdAt',
       'updatedAt'
+    )
+  }
+
+  async createWithdrawalOrderByCryptoForExternal(
+    createWithdrawalOrderByCryptoDto: CreateWithdrawalOrderByCryptoDto
+  ) {
+    return this.withdrawalsService.createWithdrawalOrderByCrypto(
+      createWithdrawalOrderByCryptoDto
     )
   }
 

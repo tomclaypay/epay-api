@@ -18,6 +18,7 @@ export class UpayWebhooksService {
   ) {}
 
   async onModuleInit() {
+    this.upayApiSecret = this.configService.get<string>('U_API_SECRET')
     // Initialization logic if needed
   }
 
@@ -42,9 +43,10 @@ export class UpayWebhooksService {
       return
     }
 
-    const customer = await this.customerWalletsService.getCustomerWalletById(
-      upayWebhookDto.customerId
-    )
+    const customer =
+      await this.customerWalletsService.getCustomerWalletByCustomerId(
+        upayWebhookDto.customerId
+      )
 
     if (!customer) {
       return
@@ -57,7 +59,7 @@ export class UpayWebhooksService {
       status: OrderStatus.Succeed,
       chainName: upayWebhookDto.chainName,
       txHash: upayWebhookDto.txHash,
-      usdtFee: upayWebhookDto.fee,
+      usdtFee: upayWebhookDto.fee || 0,
       customerWallet: customer.id,
       upayOrderRef: upayWebhookDto.orderId
     })
@@ -82,26 +84,22 @@ export class UpayWebhooksService {
       return
     }
 
-    const customer = await this.customerWalletsService.getCustomerWalletById(
-      upayWebhookDto.customerId
-    )
+    const customer =
+      await this.customerWalletsService.getCustomerWalletByCustomerId(
+        upayWebhookDto.customerId
+      )
 
     if (!customer) {
       return
     }
 
-    const withdrawalOrder =
-      await this.withdrawalsService.getWithdrawalByUpayOrderRef(
-        upayWebhookDto.orderId
-      )
-
     const updateWithdrawalOrder =
       await this.withdrawalsService.updateWithdrawalOrderByCrypto(
-        withdrawalOrder.id,
+        upayWebhookDto.orderRef,
         {
           status: OrderStatus.Succeed,
           txHash: upayWebhookDto.txHash,
-          usdtFee: upayWebhookDto.fee,
+          usdtFee: upayWebhookDto.fee || 0,
           customerWallet: customer.id
         }
       )

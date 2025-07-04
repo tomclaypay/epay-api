@@ -23,6 +23,7 @@ import {
 } from '../../resources/deposits/dto/deposit-request.dto'
 import { SettingsResponse } from '../../resources/settings/dto/setting-response.dto'
 import {
+  CreateWithdrawalOrderByCryptoDto,
   CreateWithdrawalOrderDto,
   GetWithdrawalsQueriesDto
 } from '../../resources/withdrawals/dto/withdrawal-request.dto'
@@ -130,6 +131,22 @@ export class ExternalsController {
   ) {
     return this.externalsService.createWithdrawalOrderForExternal(
       createWithdrawalOrderDto
+    )
+  }
+
+  @UseGuards(ApiKeyAuthGuard, MaintenanceGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @Post('withdrawals/crypto')
+  @AuthApiError()
+  @ApiCreatedResponse({
+    description: 'Submit withdrawal successful',
+    type: WithdrawalData
+  })
+  async createWithdrawalOrderByCryptoForExternal(
+    @Body() createDepositOrderByCryptoDto: CreateWithdrawalOrderByCryptoDto
+  ) {
+    return this.externalsService.createWithdrawalOrderByCryptoForExternal(
+      createDepositOrderByCryptoDto
     )
   }
 

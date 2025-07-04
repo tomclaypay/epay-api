@@ -17,14 +17,16 @@ export class UpayAdapterService implements OnModuleInit {
 
   async getWalletAddress(
     customerId: string,
-    chainName: ChainName = ChainName.BSC
+    chainName: ChainName = ChainName.BSC,
+    mt5Id: string
   ) {
     try {
       const url = `${this.uBaseUrl}/customer-wallets/get-address`
 
       const bodyData = {
         customerId,
-        chainName
+        chainName,
+        mt5Id
       }
 
       const headers = {
@@ -54,7 +56,9 @@ export class UpayAdapterService implements OnModuleInit {
     customerId: string,
     orderRef: string,
     toAddress: string,
-    amount: number
+    amount: number,
+    mt5Id: string,
+    chainName: ChainName
   ) {
     try {
       const url = `${this.uBaseUrl}/withdrawals`
@@ -62,9 +66,10 @@ export class UpayAdapterService implements OnModuleInit {
       const bodyData = {
         customerId: customerId,
         orderRef: orderRef,
-        chainName: ChainName.BSC,
+        chainName,
         toAddress: toAddress,
-        amount: amount
+        amount: amount,
+        mt5Id
       }
 
       const headers = {

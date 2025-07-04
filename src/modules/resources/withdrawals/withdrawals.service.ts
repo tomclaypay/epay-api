@@ -124,7 +124,9 @@ export class WithdrawalsService implements OnModuleInit {
           createWithdrawalOrderByCryptoDto.customerId,
           newOrder.id,
           createWithdrawalOrderByCryptoDto.toAddress,
-          createWithdrawalOrderByCryptoDto.usdtAmount
+          createWithdrawalOrderByCryptoDto.usdtAmount,
+          createWithdrawalOrderByCryptoDto.mt5Id,
+          createWithdrawalOrderByCryptoDto.chainName
         )
 
         if (!result.isSucceed) {

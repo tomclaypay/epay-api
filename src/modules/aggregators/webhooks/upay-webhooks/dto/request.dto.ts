@@ -18,6 +18,11 @@ export class UpayWebhookDto {
   @IsNotEmpty()
   orderId: string
 
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  orderRef: string
+
   @IsString()
   @IsOptional()
   @IsNotEmpty()

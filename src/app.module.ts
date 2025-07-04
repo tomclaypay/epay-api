@@ -9,6 +9,7 @@ import { SettingsModule } from './modules/resources/settings/settings.module'
 import { InternalsModule } from './modules/aggregators/internals/internals.module'
 import { VirtualWebhooksModule } from './modules/aggregators/webhooks/virtual-webhooks/virtual-webhooks.module'
 import { CacheModule } from '@nestjs/cache-manager'
+import { UpayWebhooksModule } from '@/modules/aggregators/webhooks/upay-webhooks/upay-webhooks.module'
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { CacheModule } from '@nestjs/cache-manager'
     ExternalsModule,
     InternalsModule,
     VirtualWebhooksModule,
+    UpayWebhooksModule,
     CacheModule.register({
       ttl: 10000, // milliseconds
       max: 10, // maximum number of items in cache

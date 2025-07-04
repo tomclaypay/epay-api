@@ -19,15 +19,14 @@ export class NotificationsService implements OnModuleInit {
   }
 
   async sendTelegramMessage(msg: string, groupType: string = 'NOTIFICATION') {
-    if (groupType == 'NOTIFICATION') {
-      const url = `https://api.telegram.org/bot${this.telegramToken}/sendMessage?chat_id=${this.telegramChatId}&parse_mode=HTML&text=${msg}`
-      fetch(url)
-    }
-
-    if (groupType == 'PENDING_WITHDRAWAL') {
-      const url = `https://api.telegram.org/bot${this.telegramToken}/sendMessage?chat_id=${this.telegramPendingWithdrawalChatId}&parse_mode=HTML&text=${msg}`
-      fetch(url)
-    }
+    // if (groupType == 'NOTIFICATION') {
+    //   const url = `https://api.telegram.org/bot${this.telegramToken}/sendMessage?chat_id=${this.telegramChatId}&parse_mode=HTML&text=${msg}`
+    //   fetch(url)
+    // }
+    // if (groupType == 'PENDING_WITHDRAWAL') {
+    //   const url = `https://api.telegram.org/bot${this.telegramToken}/sendMessage?chat_id=${this.telegramPendingWithdrawalChatId}&parse_mode=HTML&text=${msg}`
+    //   fetch(url)
+    // }
   }
 
   async sendVirtualDepositOrderNotification(

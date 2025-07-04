@@ -22,6 +22,12 @@ export class CustomerWalletsService {
     return this.customerWalletModel.findById(id)
   }
 
+  async getCustomerWalletByCustomerId(customerId: string) {
+    return this.customerWalletModel.findOne({
+      customerId
+    })
+  }
+
   async getCustomerWallet(customerId: string) {
     return this.customerWalletModel.findOne({
       customerId
@@ -34,10 +40,18 @@ export class CustomerWalletsService {
     const customerWallet = await this.customerWalletModel.findOne({
       customerId: getWalletAddressByCustomerIdDto.customerId
     })
-    if (!customerWallet) {
+    if (
+      !customerWallet ||
+      (getWalletAddressByCustomerIdDto.chainName === ChainName.TRON &&
+        !customerWallet.tronAddress) ||
+      ((getWalletAddressByCustomerIdDto.chainName === ChainName.ETHEREUM ||
+        getWalletAddressByCustomerIdDto.chainName === ChainName.BSC) &&
+        !customerWallet.evmAddress)
+    ) {
       const addressNew = await this.upayAdapterService.getWalletAddress(
         getWalletAddressByCustomerIdDto.customerId,
-        getWalletAddressByCustomerIdDto.chainName
+        getWalletAddressByCustomerIdDto.chainName,
+        getWalletAddressByCustomerIdDto.mt5Id
       )
 
       if (!addressNew.isSucceed) {
@@ -49,21 +63,51 @@ export class CustomerWalletsService {
       const address = addressNew.data.address
       switch (getWalletAddressByCustomerIdDto.chainName) {
         case ChainName.TRON:
-          await this.customerWalletModel.create({
-            customerId: getWalletAddressByCustomerIdDto.customerId,
-            tronAddress: address,
-            mt5Id: getWalletAddressByCustomerIdDto.mt5Id,
-            callback: getWalletAddressByCustomerIdDto.callback
-          })
+          if (customerWallet) {
+            await this.customerWalletModel.updateOne(
+              {
+                _id: customerWallet._id
+              },
+              {
+                $set: {
+                  tronAddress: address,
+                  mt5Id: getWalletAddressByCustomerIdDto.mt5Id
+                }
+              }
+            )
+          } else {
+            await this.customerWalletModel.create({
+              customerId: getWalletAddressByCustomerIdDto.customerId,
+              tronAddress: address,
+              mt5Id: getWalletAddressByCustomerIdDto.mt5Id,
+              callback: getWalletAddressByCustomerIdDto.callback
+            })
+          }
+
           break
         case ChainName.ETHEREUM:
         case ChainName.BSC:
-          await this.customerWalletModel.create({
-            customerId: getWalletAddressByCustomerIdDto.customerId,
-            evmAddress: address,
-            mt5Id: getWalletAddressByCustomerIdDto.mt5Id,
-            callback: getWalletAddressByCustomerIdDto.callback
-          })
+          if (customerWallet) {
+            await this.customerWalletModel.updateOne(
+              {
+                _id: customerWallet._id
+              },
+              {
+                $set: {
+                  evmAddress: address,
+                  mt5Id: getWalletAddressByCustomerIdDto.mt5Id
+                }
+              }
+            )
+          } else {
+            await this.customerWalletModel.create({
+              customerId: getWalletAddressByCustomerIdDto.customerId,
+              evmAddress: address,
+              mt5Id: getWalletAddressByCustomerIdDto.mt5Id,
+              callback: getWalletAddressByCustomerIdDto.callback
+            })
+          }
+
           break
         default:
           throw new HttpException('Chain not supported', HttpStatus.BAD_REQUEST)
@@ -73,6 +117,16 @@ export class CustomerWalletsService {
         chainName: getWalletAddressByCustomerIdDto.chainName
       }
     }
+    await this.customerWalletModel.updateOne(
+      {
+        _id: customerWallet._id
+      },
+      {
+        $set: {
+          mt5Id: getWalletAddressByCustomerIdDto.mt5Id
+        }
+      }
+    )
     return {
       address:
         getWalletAddressByCustomerIdDto.chainName === ChainName.TRON

@@ -42,7 +42,7 @@ export const DepositSchema = new mongoose.Schema(
     },
     ref: {
       type: String,
-      required: true
+      required: false
     },
     refXendit: {
       type: String,
