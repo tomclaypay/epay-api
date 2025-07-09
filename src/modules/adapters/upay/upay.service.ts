@@ -37,8 +37,8 @@ export class UpayAdapterService implements OnModuleInit {
       const res = await fetch(url, {
         method: 'POST',
         headers: headers,
-        body: JSON.stringify(bodyData),
-        timeout: 5000
+        body: JSON.stringify(bodyData)
+        // timeout: 5000
       })
 
       if (!res.ok) {
@@ -80,8 +80,8 @@ export class UpayAdapterService implements OnModuleInit {
       const res = await fetch(url, {
         method: 'POST',
         headers: headers,
-        body: JSON.stringify(bodyData),
-        timeout: 5000
+        body: JSON.stringify(bodyData)
+        // timeout: 5000
       })
 
       if (!res.ok) {
