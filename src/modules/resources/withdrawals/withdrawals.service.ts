@@ -158,7 +158,8 @@ export class WithdrawalsService implements OnModuleInit {
     const settings = await this.settingsService.getSettings()
     return this.withdrawalModel.findByIdAndUpdate(orderId, {
       ...updateWithdrawalOrderByCryptoDto,
-      fee: updateWithdrawalOrderByCryptoDto.usdtFee * settings.exchangeRate
+      fee: updateWithdrawalOrderByCryptoDto.usdtFee * settings.exchangeRate,
+      exchangeRate: settings.exchangeRate
     })
   }
   async updateWithdrawalOrder(

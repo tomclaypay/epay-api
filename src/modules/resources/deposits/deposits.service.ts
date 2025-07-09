@@ -546,6 +546,7 @@ export class DepositsService implements OnModuleInit {
           actualAmount: amount,
           usdtActualAmount: createDepositOrderByCryptoDto.usdtAmount,
           code,
+          exchangeRate: settings.exchangeRate,
           fee: createDepositOrderByCryptoDto.usdtFee * settings.exchangeRate,
           orderType: DepositOrderType.CRYPTO
         })
