@@ -79,17 +79,17 @@ export class ExternalsController {
     )
   }
 
-  // @UseGuards(ApiKeyAuthGuard, MaintenanceGuard)
-  // @UsePipes(new ValidationPipe({ transform: true }))
-  // @Post('wallets')
-  // @AuthApiError()
-  // async getCusstomerWalletForExternal(
-  //   @Body() getWalletAddressByCustomerIdDto: GetWalletAddressByCustomerIdDto
-  // ) {
-  //   return this.externalsService.getCustomerWalletForExternal(
-  //     getWalletAddressByCustomerIdDto
-  //   )
-  // }
+  @UseGuards(ApiKeyAuthGuard, MaintenanceGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @Post('wallets')
+  @AuthApiError()
+  async getCusstomerWalletForExternal(
+    @Body() getWalletAddressByCustomerIdDto: GetWalletAddressByCustomerIdDto
+  ) {
+    return this.externalsService.getCustomerWalletForExternal(
+      getWalletAddressByCustomerIdDto
+    )
+  }
 
   @UseGuards(ApiKeyAuthGuard, MaintenanceGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -134,21 +134,21 @@ export class ExternalsController {
     )
   }
 
-  // @UseGuards(ApiKeyAuthGuard, MaintenanceGuard)
-  // @UsePipes(new ValidationPipe({ transform: true }))
-  // @Post('withdrawals/crypto')
-  // @AuthApiError()
-  // @ApiCreatedResponse({
-  //   description: 'Submit withdrawal successful',
-  //   type: WithdrawalData
-  // })
-  // async createWithdrawalOrderByCryptoForExternal(
-  //   @Body() createDepositOrderByCryptoDto: CreateWithdrawalOrderByCryptoDto
-  // ) {
-  //   return this.externalsService.createWithdrawalOrderByCryptoForExternal(
-  //     createDepositOrderByCryptoDto
-  //   )
-  // }
+  @UseGuards(ApiKeyAuthGuard, MaintenanceGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @Post('withdrawals/crypto')
+  @AuthApiError()
+  @ApiCreatedResponse({
+    description: 'Submit withdrawal successful',
+    type: WithdrawalData
+  })
+  async createWithdrawalOrderByCryptoForExternal(
+    @Body() createDepositOrderByCryptoDto: CreateWithdrawalOrderByCryptoDto
+  ) {
+    return this.externalsService.createWithdrawalOrderByCryptoForExternal(
+      createDepositOrderByCryptoDto
+    )
+  }
 
   @UseGuards(ApiKeyAuthGuard, MaintenanceGuard)
   @UsePipes(new ValidationPipe({ transform: true }))

@@ -837,6 +837,8 @@ export class DepositsService implements OnModuleInit {
       orderCode,
       orderStatus,
       orderAmount,
+      usdtAmount,
+      isCrypto: usdtAmount > 0 ? true : false,
       reason,
       secretKey: this.configService.get('CALLBACK_SECRET_KEY')
     }
