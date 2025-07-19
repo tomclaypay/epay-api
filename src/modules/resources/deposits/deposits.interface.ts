@@ -6,11 +6,11 @@ export interface Deposit extends Document {
   customerWallet: string
   upayOrderRef: string
   actualAmount: number
-  usdtActualAmount: number
+  usdActualAmount: number
   exchangeRate: number
   chainName: string
   txHash: string
-  usdtFee: number
+  usdFee: number
   code: string
   ref: string
   refXendit: string

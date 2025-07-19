@@ -210,7 +210,7 @@ export class CreateWithdrawalOrderByCryptoDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  usdtAmount: number
+  usdAmount: number
 
   @ApiProperty()
   @IsString()
@@ -236,7 +236,7 @@ export class UpdateWithdrawalOrderByCryptoDto {
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
-  usdtFee: number
+  usdFee: number
 
   @ApiProperty()
   @IsString()

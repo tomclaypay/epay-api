@@ -22,7 +22,7 @@ export const DepositSchema = new mongoose.Schema(
       type: Number,
       required: false
     },
-    usdtActualAmount: {
+    usdActualAmount: {
       type: Number,
       required: false
     },
@@ -84,7 +84,7 @@ export const DepositSchema = new mongoose.Schema(
       ref: 'VirtualTransaction',
       required: false
     },
-    usdtFee: {
+    usdFee: {
       type: Number,
       required: false
     },

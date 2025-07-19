@@ -37,7 +37,7 @@ export const WithdrawalSchema = new mongoose.Schema(
       type: Number,
       required: false
     },
-    usdtAmount: {
+    usdAmount: {
       type: Number,
       required: false
     },
@@ -57,7 +57,7 @@ export const WithdrawalSchema = new mongoose.Schema(
       type: Number,
       required: false
     },
-    usdtFee: {
+    usdFee: {
       type: Number,
       required: false
     },

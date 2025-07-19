@@ -243,7 +243,7 @@ export class DepositsService implements OnModuleInit {
       deposit.code,
       deposit.status,
       deposit.actualAmount,
-      deposit.usdtActualAmount ?? 0,
+      deposit.usdActualAmount ?? 0,
       deposit.note,
       transaction?.bankAccountNo
         ? transaction?.bankAccountNo
@@ -304,7 +304,7 @@ export class DepositsService implements OnModuleInit {
       deposit.code,
       deposit.status,
       deposit.actualAmount,
-      deposit.usdtActualAmount ?? 0,
+      deposit.usdActualAmount ?? 0,
       deposit.note,
       transaction?.bankAccount
     )
@@ -373,7 +373,7 @@ export class DepositsService implements OnModuleInit {
       deposit.code,
       deposit.status,
       deposit.actualAmount,
-      deposit.usdtActualAmount ?? 0,
+      deposit.usdActualAmount ?? 0,
       deposit.note,
       transaction.bankAccount
     )
@@ -432,7 +432,7 @@ export class DepositsService implements OnModuleInit {
       deposit.code,
       deposit.status,
       deposit.actualAmount,
-      deposit.usdtActualAmount ?? 0,
+      deposit.usdActualAmount ?? 0,
       deposit.note
     )
     return {
@@ -520,22 +520,22 @@ export class DepositsService implements OnModuleInit {
       ? createDepositOrderByCryptoDto.mt5Id?.trim().split('\t')[0]
       : null
 
-    //Round the deposit usdtAmount
-    createDepositOrderByCryptoDto.usdtAmount = Math.floor(
-      createDepositOrderByCryptoDto.usdtAmount
+    //Round the deposit usdAmount
+    createDepositOrderByCryptoDto.usdAmount = Math.floor(
+      createDepositOrderByCryptoDto.usdAmount
     )
 
     const minDepositAmount = settings.minDepositAmount / settings.exchangeRate
     const maxDepositAmount = settings.maxDepositAmount / settings.exchangeRate
 
     if (
-      createDepositOrderByCryptoDto.usdtAmount < minDepositAmount ||
-      createDepositOrderByCryptoDto.usdtAmount > maxDepositAmount
+      createDepositOrderByCryptoDto.usdAmount < minDepositAmount ||
+      createDepositOrderByCryptoDto.usdAmount > maxDepositAmount
     ) {
       return
     }
     const amount =
-      createDepositOrderByCryptoDto.usdtAmount * settings.exchangeRate
+      createDepositOrderByCryptoDto.usdAmount * settings.exchangeRate
     let attempts = 0
     while (attempts < 3) {
       try {
@@ -544,10 +544,10 @@ export class DepositsService implements OnModuleInit {
           ...createDepositOrderByCryptoDto,
           amount,
           actualAmount: amount,
-          usdtActualAmount: createDepositOrderByCryptoDto.usdtAmount,
+          usdActualAmount: createDepositOrderByCryptoDto.usdAmount,
           code,
           exchangeRate: settings.exchangeRate,
-          fee: createDepositOrderByCryptoDto.usdtFee * settings.exchangeRate,
+          fee: createDepositOrderByCryptoDto.usdFee * settings.exchangeRate,
           orderType: DepositOrderType.CRYPTO
         })
 
@@ -809,7 +809,7 @@ export class DepositsService implements OnModuleInit {
         tx.code,
         tx.status,
         tx.actualAmount,
-        tx.usdtActualAmount,
+        tx.usdActualAmount,
         tx.note,
         transaction?.bankAccount
       )
@@ -826,7 +826,7 @@ export class DepositsService implements OnModuleInit {
     orderCode: string,
     orderStatus: string,
     orderAmount: number,
-    usdtAmount = 0,
+    usdAmount = 0,
     reason = '',
     bankAccountNo: string = null
   ) {
@@ -837,8 +837,8 @@ export class DepositsService implements OnModuleInit {
       orderCode,
       orderStatus,
       orderAmount,
-      usdtAmount,
-      isCrypto: usdtAmount > 0 ? true : false,
+      usdAmount,
+      isCrypto: usdAmount > 0 ? true : false,
       reason,
       secretKey: this.configService.get('CALLBACK_SECRET_KEY')
     }
@@ -1026,7 +1026,7 @@ export class DepositsService implements OnModuleInit {
           cancelDeposit.code,
           OrderStatus.Canceled,
           cancelDeposit.actualAmount,
-          cancelDeposit.usdtActualAmount ?? 0,
+          cancelDeposit.usdActualAmount ?? 0,
           cancelDeposit.note
         )
       })

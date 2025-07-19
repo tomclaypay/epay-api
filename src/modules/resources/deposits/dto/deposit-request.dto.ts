@@ -69,7 +69,7 @@ export class CreateDepositOrderByCryptoDto {
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()
-  usdtAmount: number
+  usdAmount: number
 
   @ApiProperty()
   @IsString()
@@ -93,7 +93,7 @@ export class CreateDepositOrderByCryptoDto {
   @ApiProperty()
   @IsNumber()
   @IsOptional()
-  usdtFee?: number
+  usdFee?: number
 }
 
 export class UpdateDepositOrderDto {
@@ -110,7 +110,7 @@ export class UpdateDepositOrderDto {
   @ApiProperty()
   @IsNumber()
   @IsOptional()
-  usdtFee?: number
+  usdFee?: number
 
   @ApiProperty()
   @IsNumber()
@@ -120,7 +120,7 @@ export class UpdateDepositOrderDto {
   @ApiProperty()
   @IsNumber()
   @IsOptional()
-  usdtActualAmount?: number
+  usdActualAmount?: number
 
   @IsString()
   @IsOptional()

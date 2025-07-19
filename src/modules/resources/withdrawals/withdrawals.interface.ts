@@ -11,9 +11,9 @@ export interface Withdrawal extends Document {
   customerWallet: string
   upayOrderRef: string
   exchangeRate: number
-  usdtAmount: number
+  usdAmount: number
   txHash: string
-  usdtFee: number
+  usdFee: number
   toAddress: string
   chainName?: string
   fee: number

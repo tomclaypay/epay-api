@@ -89,8 +89,8 @@ export class WithdrawalsService implements OnModuleInit {
     const settings = await this.settingsService.getSettings()
 
     //Round the withdrawal amount
-    createWithdrawalOrderByCryptoDto.usdtAmount = Math.floor(
-      createWithdrawalOrderByCryptoDto.usdtAmount
+    createWithdrawalOrderByCryptoDto.usdAmount = Math.floor(
+      createWithdrawalOrderByCryptoDto.usdAmount
     )
 
     const minWithdrawalAmount =
@@ -99,8 +99,8 @@ export class WithdrawalsService implements OnModuleInit {
       settings.maxWithdrawalAmount / settings.exchangeRate
 
     if (
-      createWithdrawalOrderByCryptoDto.usdtAmount < minWithdrawalAmount ||
-      createWithdrawalOrderByCryptoDto.usdtAmount > maxWithdrawalAmount
+      createWithdrawalOrderByCryptoDto.usdAmount < minWithdrawalAmount ||
+      createWithdrawalOrderByCryptoDto.usdAmount > maxWithdrawalAmount
     )
       throw new HttpException(
         `Withdrawal amount not valid. Amount must be greater than ${minWithdrawalAmount} and less than ${maxWithdrawalAmount}.`,
@@ -109,7 +109,7 @@ export class WithdrawalsService implements OnModuleInit {
 
     let attempts = 0
     const amount =
-      createWithdrawalOrderByCryptoDto.usdtAmount * settings.exchangeRate
+      createWithdrawalOrderByCryptoDto.usdAmount * settings.exchangeRate
     while (attempts < 3) {
       try {
         const code = await generateCode()
@@ -124,7 +124,7 @@ export class WithdrawalsService implements OnModuleInit {
           createWithdrawalOrderByCryptoDto.customerId,
           newOrder.id,
           createWithdrawalOrderByCryptoDto.toAddress,
-          createWithdrawalOrderByCryptoDto.usdtAmount,
+          createWithdrawalOrderByCryptoDto.usdAmount,
           createWithdrawalOrderByCryptoDto.mt5Id,
           createWithdrawalOrderByCryptoDto.chainName
         )
@@ -158,7 +158,7 @@ export class WithdrawalsService implements OnModuleInit {
     const settings = await this.settingsService.getSettings()
     return this.withdrawalModel.findByIdAndUpdate(orderId, {
       ...updateWithdrawalOrderByCryptoDto,
-      fee: updateWithdrawalOrderByCryptoDto.usdtFee * settings.exchangeRate,
+      fee: updateWithdrawalOrderByCryptoDto.usdFee * settings.exchangeRate,
       exchangeRate: settings.exchangeRate
     })
   }
@@ -290,7 +290,7 @@ export class WithdrawalsService implements OnModuleInit {
       withdrawal.ref,
       withdrawal.status,
       withdrawal.amount,
-      withdrawal.usdtAmount ?? 0,
+      withdrawal.usdAmount ?? 0,
       withdrawal.note
     )
 
@@ -349,7 +349,7 @@ export class WithdrawalsService implements OnModuleInit {
       withdrawal.ref,
       withdrawal.status,
       withdrawal.amount,
-      withdrawal.usdtAmount ?? 0,
+      withdrawal.usdAmount ?? 0,
       withdrawal.note
     )
 
@@ -404,7 +404,7 @@ export class WithdrawalsService implements OnModuleInit {
     orderRef: string,
     orderStatus: string,
     orderAmount: number,
-    usdtAmount = 0,
+    usdAmount = 0,
     reason = ''
   ) {
     const bodyData = {
@@ -413,8 +413,8 @@ export class WithdrawalsService implements OnModuleInit {
       orderRef,
       orderStatus,
       orderAmount,
-      usdtAmount,
-      isCrypto: usdtAmount > 0 ? true : false,
+      usdAmount,
+      isCrypto: usdAmount > 0 ? true : false,
       reason,
       secretKey: this.configService.get('CALLBACK_SECRET_KEY')
     }
@@ -462,7 +462,7 @@ export class WithdrawalsService implements OnModuleInit {
       withdrawal.ref,
       withdrawal.status,
       withdrawal.amount,
-      withdrawal.usdtAmount ?? 0,
+      withdrawal.usdAmount ?? 0,
       withdrawal.note
     )
     return {

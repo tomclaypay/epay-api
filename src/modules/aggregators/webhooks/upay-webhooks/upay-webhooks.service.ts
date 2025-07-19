@@ -53,13 +53,13 @@ export class UpayWebhooksService {
     }
 
     const depositOrder = await this.depositsService.createDepositOrderByCrypto({
-      usdtAmount: upayWebhookDto.amount,
+      usdAmount: upayWebhookDto.amount,
       callback: customer.callback,
       mt5Id: customer.mt5Id,
       status: OrderStatus.Succeed,
       chainName: upayWebhookDto.chainName,
       txHash: upayWebhookDto.txHash,
-      usdtFee: upayWebhookDto.fee || 0,
+      usdFee: upayWebhookDto.fee || 0,
       customerWallet: customer.id,
       upayOrderRef: upayWebhookDto.orderId
     })
@@ -72,7 +72,7 @@ export class UpayWebhooksService {
       depositOrder.code,
       depositOrder.status,
       depositOrder.amount,
-      depositOrder.usdtActualAmount
+      depositOrder.usdActualAmount
     )
   }
 
@@ -99,7 +99,7 @@ export class UpayWebhooksService {
         {
           status: OrderStatus.Succeed,
           txHash: upayWebhookDto.txHash,
-          usdtFee: upayWebhookDto.fee || 0,
+          usdFee: upayWebhookDto.fee || 0,
           customerWallet: customer.id
         }
       )
@@ -111,7 +111,7 @@ export class UpayWebhooksService {
       null,
       updateWithdrawalOrder.status,
       updateWithdrawalOrder.amount,
-      updateWithdrawalOrder.usdtAmount
+      updateWithdrawalOrder.usdAmount
     )
   }
 }
