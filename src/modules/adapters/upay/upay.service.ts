@@ -56,7 +56,7 @@ export class UpayAdapterService implements OnModuleInit {
     customerId: string,
     orderRef: string,
     toAddress: string,
-    amount: number,
+    usdAmount: number,
     mt5Id: string,
     chainName: ChainName
   ) {
@@ -68,7 +68,7 @@ export class UpayAdapterService implements OnModuleInit {
         orderRef: orderRef,
         chainName,
         toAddress: toAddress,
-        amount: amount,
+        usdAmount,
         mt5Id
       }
 

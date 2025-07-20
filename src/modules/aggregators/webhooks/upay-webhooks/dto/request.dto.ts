@@ -51,6 +51,11 @@ export class UpayWebhookDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  usdtToUsdRate: number
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
   secretKey: string
 
   @ApiProperty()
