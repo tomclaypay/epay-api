@@ -49,7 +49,7 @@ export class UpayWebhookDto {
   amount: number
 
   @ApiProperty()
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
   usdtToUsdRate: number
 
