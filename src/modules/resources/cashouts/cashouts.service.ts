@@ -60,9 +60,10 @@ export class CashoutsService implements OnModuleInit {
 
   async createCashoutOrder(createCashoutOrderDto: CreateCashoutOrderDto) {
     const settings = await this.settingsService.getSettings()
-    const fee =
-      settings.cashoutFeeFlat +
-      createCashoutOrderDto.amount * settings.cashoutFeePct
+    const fee = createCashoutOrderDto.isCrypto
+      ? createCashoutOrderDto.fee || 0
+      : settings.cashoutFeeFlat +
+        createCashoutOrderDto.amount * settings.cashoutFeePct
     const newOrder = new this.cashoutModel({
       ...createCashoutOrderDto,
       fee
@@ -75,9 +76,8 @@ export class CashoutsService implements OnModuleInit {
     updateCashoutOrderDto: UpdateCashoutOrderDto,
     userId: string
   ) {
-    const cashoutOrder = await this.cashoutModel.findById(cashoutId)
-    let fee = cashoutOrder.fee
-    if (updateCashoutOrderDto.amount) {
+    let fee = updateCashoutOrderDto.fee
+    if (updateCashoutOrderDto.amount && !updateCashoutOrderDto.isCrypto) {
       const settings = await this.settingsService.getSettings()
       fee =
         settings.cashoutFeeFlat +
@@ -107,7 +107,8 @@ export class CashoutsService implements OnModuleInit {
       createdAt: {
         $gte: new Date(getSummaryQueriesDto.startDate),
         $lt: new Date(getSummaryQueriesDto.endDate)
-      }
+      },
+      isCrypto: getSummaryQueriesDto.isCrypto
     })
 
     const cashoutsTotalAmount = sumBy(cashouts, 'amount') || 0
@@ -121,7 +122,8 @@ export class CashoutsService implements OnModuleInit {
       createdAt: {
         $gte: new Date(getSummaryQueriesDto.startDate),
         $lt: new Date(getSummaryQueriesDto.endDate)
-      }
+      },
+      isCrypto: getSummaryQueriesDto.isCrypto
     })
   }
 
@@ -130,7 +132,8 @@ export class CashoutsService implements OnModuleInit {
       createdAt: {
         $gte: new Date(getSummaryQueriesDto.startDate),
         $lt: new Date(getSummaryQueriesDto.endDate)
-      }
+      },
+      isCrypto: getSummaryQueriesDto.isCrypto
     })
 
     return sumBy(cashouts, 'fee') || 0
@@ -141,14 +144,17 @@ export class CashoutsService implements OnModuleInit {
       createdAt: {
         $gte: new Date(getSummaryQueriesDto.startDate),
         $lt: new Date(getSummaryQueriesDto.endDate)
-      }
+      },
+      isCrypto: getSummaryQueriesDto.isCrypto
     })
 
     return sumBy(cashouts, 'amount') || 0
   }
 
-  async getCashoutTotalBalance() {
-    const succeedCashouts = await this.cashoutModel.find()
+  async getCashoutTotalBalance(isCrypto: boolean) {
+    const succeedCashouts = await this.cashoutModel.find({
+      isCrypto: isCrypto
+    })
 
     const amount = sumBy(succeedCashouts, 'amount') || 0
     const fee = sumBy(succeedCashouts, 'fee') || 0
@@ -162,7 +168,8 @@ export class CashoutsService implements OnModuleInit {
       updatedAt: {
         $gte: new Date(getSummaryQueriesDto.startDate),
         $lt: new Date(getSummaryQueriesDto.endDate)
-      }
+      },
+      isCrypto: getSummaryQueriesDto.isCrypto
     })
 
     const amount = sumBy(cashouts, 'amount') || 0

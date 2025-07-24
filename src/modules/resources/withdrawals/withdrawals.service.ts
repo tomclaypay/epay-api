@@ -17,7 +17,7 @@ import {
   UpdateWithdrawalOrderByCryptoDto,
   UpdateWithdrawalOrderDto
 } from './dto/withdrawal-request.dto'
-import { find, pick, sumBy } from 'lodash'
+import { find, get, pick, sumBy } from 'lodash'
 import { SettingsService } from '../settings/settings.service'
 import { ConfigService } from '@nestjs/config'
 import { GetSummaryQueriesDto } from '../../aggregators/admins/dto/admin-request.dto'
@@ -108,14 +108,13 @@ export class WithdrawalsService implements OnModuleInit {
       )
 
     let attempts = 0
-    const amount =
-      createWithdrawalOrderByCryptoDto.usdAmount * settings.exchangeRate
+
     while (attempts < 3) {
       try {
         const code = await generateCode()
         const newOrder = new this.withdrawalModel({
           ...createWithdrawalOrderByCryptoDto,
-          amount,
+          amount: 0,
           code
         })
         await newOrder.save()
@@ -158,7 +157,7 @@ export class WithdrawalsService implements OnModuleInit {
     const settings = await this.settingsService.getSettings()
     return this.withdrawalModel.findByIdAndUpdate(orderId, {
       ...updateWithdrawalOrderByCryptoDto,
-      fee: updateWithdrawalOrderByCryptoDto.usdFee * settings.exchangeRate,
+      fee: 0,
       exchangeRate: settings.exchangeRate
     })
   }
@@ -480,7 +479,8 @@ export class WithdrawalsService implements OnModuleInit {
     start = 0,
     length = 10,
     sortBy = '_id',
-    sortType = 'asc'
+    sortType = 'asc',
+    isCrypto = false
   ) {
     try {
       const filter = {}
@@ -494,6 +494,12 @@ export class WithdrawalsService implements OnModuleInit {
 
       if (status !== '-1') {
         filter['status'] = status
+      }
+
+      if (isCrypto) {
+        filter['toAddress'] = { $exists: true, $ne: null }
+      } else {
+        filter['toAddress'] = { $exists: false }
       }
 
       if (startDate) {
@@ -550,7 +556,10 @@ export class WithdrawalsService implements OnModuleInit {
       },
       status: {
         $in: [OrderStatus.Succeed, OrderStatus.Pending]
-      }
+      },
+      toAddress: getSummaryQueriesDto.isCrypto
+        ? { $exists: true, $ne: null }
+        : { $exists: false }
     })
 
     const succeedWithdrawals = withdrawals.filter(
@@ -558,9 +567,16 @@ export class WithdrawalsService implements OnModuleInit {
     )
 
     const succeedWithdrawalTotalAmount =
-      sumBy(succeedWithdrawals, 'amount') || 0
+      sumBy(
+        succeedWithdrawals,
+        getSummaryQueriesDto.isCrypto ? 'usdAmount' : 'amount'
+      ) || 0
 
-    const succeedWithdrawalTotalFee = sumBy(succeedWithdrawals, 'fee') || 0
+    const succeedWithdrawalTotalFee =
+      sumBy(
+        succeedWithdrawals,
+        getSummaryQueriesDto.isCrypto ? 'usdFee' : 'fee'
+      ) || 0
 
     return [
       withdrawals.length,
@@ -642,11 +658,22 @@ export class WithdrawalsService implements OnModuleInit {
         $gte: new Date(getSummaryQueriesDto.startDate),
         $lt: new Date(getSummaryQueriesDto.endDate)
       },
-      status: OrderStatus.Succeed
+      status: OrderStatus.Succeed,
+      toAddress: getSummaryQueriesDto.isCrypto
+        ? { $exists: true, $ne: null }
+        : { $exists: false }
     })
 
-    const amount = sumBy(succeedWithdrawals, 'amount') || 0
-    const fee = sumBy(succeedWithdrawals, 'fee') || 0
+    const amount =
+      sumBy(
+        succeedWithdrawals,
+        getSummaryQueriesDto.isCrypto ? 'usdAmount' : 'amount'
+      ) || 0
+    const fee =
+      sumBy(
+        succeedWithdrawals,
+        getSummaryQueriesDto.isCrypto ? 'usdFee' : 'fee'
+      ) || 0
     return {
       balance: amount + fee,
       totalAmount: amount,

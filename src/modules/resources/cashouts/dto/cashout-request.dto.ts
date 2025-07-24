@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator'
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString
+} from 'class-validator'
 
 export class CreateCashoutOrderDto {
   @ApiProperty()
@@ -13,6 +19,16 @@ export class CreateCashoutOrderDto {
   ref: string
 
   @ApiProperty()
+  @IsBoolean()
+  @IsNotEmpty()
+  isCrypto: string
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  fee: number
+
+  @ApiProperty()
   @IsString()
   @IsOptional()
   note?: string
@@ -23,6 +39,16 @@ export class UpdateCashoutOrderDto {
   @IsNumber()
   @IsOptional()
   amount?: number
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  fee: number
+
+  @ApiProperty()
+  @IsBoolean()
+  @IsOptional()
+  isCrypto?: string
 
   @ApiProperty()
   @IsString()

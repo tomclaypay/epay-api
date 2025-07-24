@@ -134,8 +134,10 @@ import { GetSummaryQueriesDto } from './dto/admin-request.dto'
 import { SettingsResponse } from '../../resources/settings/dto/setting-response.dto'
 import { UpdateSettingsDto } from '../../resources/settings/dto/setting-request.dto'
 import {
+  CreateWithdrawalOrderByCryptoDto,
   CreateWithdrawalOrderDto,
   ManualWithdrawalDto,
+  UpdateWithdrawalOrderByCryptoDto,
   UpdateWithdrawalOrderDto,
   UpdateWithdrawalStatusDto,
   WithdrawalListing,
@@ -442,7 +444,8 @@ export class AdminsController {
       params.start,
       params.length,
       params.orderBy,
-      params.orderType
+      params.orderType,
+      datatableParams.isCrypto
     )
     const count = await this.adminsService.getListDepositDatatableForAdmin(
       true,
@@ -455,7 +458,8 @@ export class AdminsController {
       null,
       null,
       null,
-      null
+      null,
+      datatableParams.isCrypto
     )
 
     return {
@@ -483,7 +487,8 @@ export class AdminsController {
       0,
       -1,
       null,
-      null
+      null,
+      params.isCrypto
     )
 
     return listObj
@@ -627,7 +632,8 @@ export class AdminsController {
       params.start,
       params.length,
       params.orderBy,
-      params.orderType
+      params.orderType,
+      datatableParams.isCrypto
     )
     const count = await this.adminsService.getListWithdrawalDatatableForAdmin(
       true,
@@ -639,7 +645,8 @@ export class AdminsController {
       null,
       null,
       null,
-      null
+      null,
+      datatableParams.isCrypto
     )
 
     return {
@@ -668,7 +675,8 @@ export class AdminsController {
       0,
       -1,
       null,
-      null
+      null,
+      params.isCrypto
     )
 
     return listObj
@@ -774,6 +782,38 @@ export class AdminsController {
     @Body() createWithdrawalOrderDto: CreateWithdrawalOrderDto
   ) {
     return this.adminsService.createWithdrawalForAdmin(createWithdrawalOrderDto)
+  }
+
+  @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @Permission([WITHDRAWAL_CRUD, WITHDRAWAL_CREATE])
+  @Post('withdrawals-crypto')
+  @AuthApiError()
+  @ApiCreatedResponse({
+    description: 'Create withdrawal successful'
+  })
+  async createWithdrawalByCrypto(
+    @Body() createWithdrawalOrderDto: CreateWithdrawalOrderByCryptoDto
+  ) {
+    return this.adminsService.createWithdrawalByCrypto(createWithdrawalOrderDto)
+  }
+
+  @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @Permission([WITHDRAWAL_CRUD, WITHDRAWAL_UPDATE])
+  @Put('withdrawals-crypto/:withdrawalId')
+  @AuthApiError()
+  @ApiCreatedResponse({
+    description: 'Update withdrawal successful'
+  })
+  async updateWithdrawalByCrypto(
+    @Param('withdrawalId') withdrawalId: string,
+    @Body() updateWithdrawalOrderDto: UpdateWithdrawalOrderByCryptoDto
+  ) {
+    return this.adminsService.updateWithdrawalByCrypto(
+      withdrawalId,
+      updateWithdrawalOrderDto
+    )
   }
 
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
@@ -1179,8 +1219,8 @@ export class AdminsController {
   @Permission(SUMMARY_GET)
   @Get('summary-balance')
   @AuthApiError()
-  async getBalanceForAdmin() {
-    return this.adminsService.getBalanceCacheForAdmin()
+  async getBalanceForAdmin(@Query('isCrypto') isCrypto: boolean) {
+    return this.adminsService.getBalanceCacheForAdmin(isCrypto)
   }
 
   //Settings

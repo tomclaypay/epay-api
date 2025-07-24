@@ -8,7 +8,7 @@ import { InjectModel } from '@nestjs/mongoose'
 import fetch from 'node-fetch'
 import { randomInt } from 'crypto'
 import * as CryptoJS from 'crypto-js'
-import { pick, find, sumBy, chain } from 'lodash'
+import { pick, find, sumBy, chain, get } from 'lodash'
 import { Model } from 'mongoose'
 import { Deposit } from './deposits.interface'
 import {
@@ -146,7 +146,8 @@ export class DepositsService implements OnModuleInit {
     start = 0,
     length = 10,
     sortBy = '_id',
-    sortType = 'asc'
+    sortType = 'asc',
+    isCrypto = false
   ) {
     try {
       const filter = {}
@@ -163,6 +164,12 @@ export class DepositsService implements OnModuleInit {
       }
       if (type !== '-1') {
         filter['orderType'] = type
+      }
+
+      if (isCrypto) {
+        filter['orderType'] = DepositOrderType.CRYPTO
+      } else {
+        filter['orderType'] = { $ne: DepositOrderType.CRYPTO }
       }
 
       if (startDate) {
@@ -188,12 +195,14 @@ export class DepositsService implements OnModuleInit {
           .find(filter)
           .populate('transaction')
           .populate('bankTransactions')
+          .populate('customerWallet')
           .sort(sortObj)
       }
       return await this.depositOrderModel
         .find(filter)
         .populate('transaction')
         .populate('bankTransactions')
+        .populate('customerWallet')
         .sort(sortObj)
         .limit(length)
         .skip(start)
@@ -886,7 +895,10 @@ export class DepositsService implements OnModuleInit {
         $gte: new Date(getSummaryQueriesDto.startDate),
         $lt: new Date(getSummaryQueriesDto.endDate)
       },
-      status: { $in: [OrderStatus.Succeed, OrderStatus.Pending] }
+      status: { $in: [OrderStatus.Succeed, OrderStatus.Pending] },
+      orderType: getSummaryQueriesDto.isCrypto
+        ? DepositOrderType.CRYPTO
+        : { $ne: DepositOrderType.CRYPTO }
     })
 
     const succeedDeposit = deposits.filter(
@@ -897,9 +909,15 @@ export class DepositsService implements OnModuleInit {
       (deposits) => deposits.isManual === true
     )
 
-    const succeedDepositTotalAmount = sumBy(succeedDeposit, 'actualAmount') || 0
+    const succeedDepositTotalAmount =
+      sumBy(
+        succeedDeposit,
+        getSummaryQueriesDto.isCrypto ? 'usdActualAmount' : 'actualAmount'
+      ) || 0
 
-    const succeedDepositTotalFee = sumBy(succeedDeposit, 'fee') || 0
+    const succeedDepositTotalFee =
+      sumBy(succeedDeposit, getSummaryQueriesDto.isCrypto ? 'usdFee' : 'fee') ||
+      0
 
     return [
       succeedDeposit.length,
@@ -911,8 +929,6 @@ export class DepositsService implements OnModuleInit {
   }
 
   async getSucceedDepositTotal(getSummaryQueriesDto: GetSummaryQueriesDto) {
-    console.log(getSummaryQueriesDto, getSummaryQueriesDto)
-
     return this.depositOrderModel.countDocuments({
       createdAt: {
         $gte: new Date(getSummaryQueriesDto.startDate),
@@ -974,11 +990,22 @@ export class DepositsService implements OnModuleInit {
         $gte: new Date(getSummaryQueriesDto.startDate),
         $lt: new Date(getSummaryQueriesDto.endDate)
       },
-      status: OrderStatus.Succeed
+      status: OrderStatus.Succeed,
+      orderType: getSummaryQueriesDto.isCrypto
+        ? DepositOrderType.CRYPTO
+        : { $ne: DepositOrderType.CRYPTO }
     })
 
-    const amount = sumBy(succeedDeposits, 'actualAmount') || 0
-    const fee = sumBy(succeedDeposits, 'fee') || 0
+    const amount =
+      sumBy(
+        succeedDeposits,
+        getSummaryQueriesDto.isCrypto ? 'usdActualAmount' : 'actualAmount'
+      ) || 0
+    const fee =
+      sumBy(
+        succeedDeposits,
+        getSummaryQueriesDto.isCrypto ? 'usdFee' : 'fee'
+      ) || 0
     return {
       balance: amount - fee,
       totalAmount: amount,

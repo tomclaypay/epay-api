@@ -12,6 +12,7 @@ import {
   IsOptional,
   IsString
 } from 'class-validator'
+import { isString } from 'lodash'
 
 export class CreateWithdrawalOrderDto {
   @ApiProperty()
@@ -129,6 +130,10 @@ export class WithdrawalListing extends DataTableParams {
   @ApiProperty()
   @IsOptional()
   status: string
+
+  @ApiProperty()
+  @IsOptional()
+  isCrypto: boolean
 }
 
 export class WithdrawalListingForExport {
@@ -147,6 +152,10 @@ export class WithdrawalListingForExport {
   @ApiProperty()
   @IsOptional()
   endDate: Date
+
+  @ApiProperty()
+  @IsOptional()
+  isCrypto: boolean
 }
 export class ManualWithdrawalDto {
   @ApiProperty()
@@ -226,20 +235,50 @@ export class CreateWithdrawalOrderByCryptoDto {
 export class UpdateWithdrawalOrderByCryptoDto {
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  txHash: string
+  @IsOptional()
+  txHash?: string
 
   @ApiProperty()
-  @IsNotEmpty()
-  status: OrderStatus
+  @IsOptional()
+  status?: OrderStatus
 
   @ApiProperty()
   @IsNumber()
-  @IsNotEmpty()
-  usdFee: number
+  @IsOptional()
+  usdFee?: number
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  customerWallet: string
+  @IsOptional()
+  customerWallet?: string
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  toAddress?: string
+
+  @ApiProperty()
+  @IsEnum(ChainName)
+  @IsOptional()
+  chainName?: ChainName
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  mt5Id?: string
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  ref?: string
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  usdAmount?: number
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  callback?: string
 }

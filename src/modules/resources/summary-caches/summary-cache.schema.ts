@@ -6,6 +6,11 @@ export const SummaryCacheSchema = new mongoose.Schema({
     required: false,
     default: 0
   },
+  isCrypto: {
+    type: Boolean,
+    required: true,
+    default: false
+  },
   totalDepositAmount: {
     type: Number,
     required: false,

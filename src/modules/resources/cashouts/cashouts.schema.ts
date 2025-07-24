@@ -12,6 +12,11 @@ export const CashoutSchema = new mongoose.Schema(
       type: Number,
       required: false
     },
+    isCrypto: {
+      type: Boolean,
+      required: true,
+      default: false
+    },
     ref: {
       type: String,
       required: true

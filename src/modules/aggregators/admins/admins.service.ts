@@ -41,8 +41,10 @@ import {
 } from '../../resources/users/dto/user-request.dto'
 import { UsersService } from '../../resources/users/users.service'
 import {
+  CreateWithdrawalOrderByCryptoDto,
   CreateWithdrawalOrderDto,
   ManualWithdrawalDto,
+  UpdateWithdrawalOrderByCryptoDto,
   UpdateWithdrawalOrderDto
 } from '../../resources/withdrawals/dto/withdrawal-request.dto'
 import { WithdrawalsService } from '../../resources/withdrawals/withdrawals.service'
@@ -240,7 +242,8 @@ export class AdminsService implements OnModuleInit {
     start,
     length,
     sortBy,
-    sortType
+    sortType,
+    isCrypto = false
   ) {
     return this.depositsService.depositListing(
       isCounting,
@@ -253,7 +256,8 @@ export class AdminsService implements OnModuleInit {
       start,
       length,
       sortBy,
-      sortType
+      sortType,
+      isCrypto
     )
   }
 
@@ -360,7 +364,8 @@ export class AdminsService implements OnModuleInit {
     start,
     length,
     sortBy,
-    sortType
+    sortType,
+    isCrypto = false
   ) {
     return this.withdrawalsService.withdrawalListing(
       isCounting,
@@ -372,7 +377,8 @@ export class AdminsService implements OnModuleInit {
       start,
       length,
       sortBy,
-      sortType
+      sortType,
+      isCrypto
     )
   }
 
@@ -490,6 +496,24 @@ export class AdminsService implements OnModuleInit {
     return this.withdrawalsService.updateWithdrawalOrder(
       id,
       updateWithdrawalOrderDto
+    )
+  }
+
+  async createWithdrawalByCrypto(
+    createWithdrawalOrderDto: CreateWithdrawalOrderByCryptoDto
+  ) {
+    return this.withdrawalsService.createWithdrawalOrderByCrypto(
+      createWithdrawalOrderDto
+    )
+  }
+
+  async updateWithdrawalByCrypto(
+    withdrawalId: string,
+    updateWithdrawalByCryptoDto: UpdateWithdrawalOrderByCryptoDto
+  ) {
+    return this.withdrawalsService.updateWithdrawalOrderByCrypto(
+      withdrawalId,
+      updateWithdrawalByCryptoDto
     )
   }
 
@@ -791,6 +815,11 @@ export class AdminsService implements OnModuleInit {
   }
 
   async getSummaryForAdmin(getSummaryQueriesDto: GetSummaryQueriesDto) {
+    // Ép kiểu isCrypto về boolean nếu là string
+    if (typeof getSummaryQueriesDto.isCrypto === 'string') {
+      getSummaryQueriesDto.isCrypto = getSummaryQueriesDto.isCrypto === 'true'
+    }
+
     const [
       succeedDepositTotal,
       pendingDepositTotal,
@@ -825,37 +854,45 @@ export class AdminsService implements OnModuleInit {
     }
   }
 
-  async getBalanceForAdmin() {
+  async getBalanceForAdmin(isCrypto: boolean) {
     const depositBalance = await this.depositsService.getDepositTotalBalance()
 
     const withdrawalBalance =
       await this.withdrawalsService.getWithdrawalTotalBalance()
 
-    const cashoutBalance = await this.cashoutsService.getCashoutTotalBalance()
+    const cashoutBalance = await this.cashoutsService.getCashoutTotalBalance(
+      isCrypto
+    )
 
     return depositBalance - withdrawalBalance - cashoutBalance
   }
 
-  async getBalanceCacheForAdmin() {
+  async getBalanceCacheForAdmin(isCrypto: boolean) {
     const lastSummaryCacheData =
-      await this.summaryCachesService.getLastSummaryCache(moment().toDate())
+      await this.summaryCachesService.getLastSummaryCache(
+        moment().toDate(),
+        isCrypto
+      )
 
     const summaryDepositData =
       await this.depositsService.getDepositTotalBalanceByDate({
         startDate: lastSummaryCacheData.cacheTime,
-        endDate: moment().toDate()
+        endDate: moment().toDate(),
+        isCrypto
       })
 
     const summaryWithdrawalData =
       await this.withdrawalsService.getWithdrawalTotalBalanceByDate({
         startDate: lastSummaryCacheData.cacheTime,
-        endDate: moment().toDate()
+        endDate: moment().toDate(),
+        isCrypto
       })
 
     const summaryCashoutData =
       await this.cashoutsService.getCashoutTotalBalanceByDate({
         startDate: lastSummaryCacheData.cacheTime,
-        endDate: moment().toDate()
+        endDate: moment().toDate(),
+        isCrypto
       })
 
     const totalDepositAmount =

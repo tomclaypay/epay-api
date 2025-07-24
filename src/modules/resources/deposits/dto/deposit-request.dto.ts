@@ -159,6 +159,10 @@ export class DepositListing extends DataTableParams {
   @ApiProperty()
   @IsOptional()
   type: string
+
+  @ApiProperty()
+  @IsOptional()
+  isCrypto: boolean
 }
 export class DepositListingForExport extends DataTableParams {
   @ApiProperty()
@@ -180,6 +184,10 @@ export class DepositListingForExport extends DataTableParams {
   @ApiProperty()
   @IsOptional()
   type: string
+
+  @ApiProperty()
+  @IsOptional()
+  isCrypto: boolean
 }
 
 export class ManualDepositDto {

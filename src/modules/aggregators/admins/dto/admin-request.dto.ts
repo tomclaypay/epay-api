@@ -12,4 +12,8 @@ export class GetSummaryQueriesDto {
   @IsNotEmpty()
   @Type(() => Date)
   endDate: Date
+
+  @ApiProperty()
+  @IsNotEmpty()
+  isCrypto: boolean
 }

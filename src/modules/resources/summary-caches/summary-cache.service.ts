@@ -11,9 +11,9 @@ export class SummaryCachesService {
     @InjectModel('SummaryCache') private summaryCacheModel: Model<SummaryCache>
   ) {}
 
-  async getLastSummaryCache(cacheDate: Date) {
+  async getLastSummaryCache(cacheDate: Date, isCrypto: boolean) {
     const lastSummaryCacheData = await this.summaryCacheModel
-      .findOne({ cacheTime: { $lt: cacheDate } })
+      .findOne({ cacheTime: { $lt: cacheDate }, isCrypto: isCrypto })
       .sort({ createdAt: -1 })
 
     if (!lastSummaryCacheData) {
@@ -31,8 +31,8 @@ export class SummaryCachesService {
     return lastSummaryCacheData
   }
 
-  async getSummaryCacheByCacheTime(cacheTime: Date) {
-    return this.summaryCacheModel.findOne({ cacheTime })
+  async getSummaryCacheByCacheTime(cacheTime: Date, isCrypto: boolean) {
+    return this.summaryCacheModel.findOne({ cacheTime, isCrypto: isCrypto })
   }
 
   async createSummaryCache(createSummaryCacheDto: CreateSummaryCacheDto) {

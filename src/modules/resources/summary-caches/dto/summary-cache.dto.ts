@@ -1,4 +1,4 @@
-import { IsDate, IsNumber, IsNotEmpty } from 'class-validator'
+import { IsDate, IsNumber, IsNotEmpty, IsBoolean } from 'class-validator'
 
 export class CreateSummaryCacheDto {
   @IsNumber()
@@ -32,4 +32,8 @@ export class CreateSummaryCacheDto {
   @IsDate()
   @IsNotEmpty()
   cacheTime: Date
+
+  @IsNotEmpty()
+  @IsBoolean()
+  isCrypto: boolean
 }

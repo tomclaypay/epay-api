@@ -1,6 +1,7 @@
 import { Document } from 'mongoose'
 
 export interface SummaryCache extends Document {
+  isCrypto: boolean
   balance: number
   totalDepositAmount: number
   totalWithdrawalAmount: number

@@ -340,71 +340,147 @@ export class TasksService implements OnModuleInit {
 
     const existedCache =
       await this.summaryCachesService.getSummaryCacheByCacheTime(
-        midnightVnTime.toDate()
+        midnightVnTime.toDate(),
+        false
       )
-    if (existedCache) {
-      return
+    if (!existedCache) {
+      const lastSummaryCacheData =
+        await this.summaryCachesService.getLastSummaryCache(
+          midnightVnTime.toDate(),
+          false
+        )
+
+      const summaryDepositData =
+        await this.depositsService.getDepositTotalBalanceByDate({
+          startDate: lastSummaryCacheData.cacheTime,
+          endDate: midnightVnTime.toDate(),
+          isCrypto: false
+        })
+
+      const summaryWithdrawalData =
+        await this.withdrawalsService.getWithdrawalTotalBalanceByDate({
+          startDate: lastSummaryCacheData.cacheTime,
+          endDate: midnightVnTime.toDate(),
+          isCrypto: false
+        })
+      const summaryCashoutData =
+        await this.cashoutsService.getCashoutTotalBalanceByDate({
+          startDate: lastSummaryCacheData.cacheTime,
+          endDate: midnightVnTime.toDate(),
+          isCrypto: false
+        })
+
+      const totalDepositAmount =
+        lastSummaryCacheData.totalDepositAmount + summaryDepositData.totalAmount
+      const totalDepositFee =
+        lastSummaryCacheData.totalDepositFee + summaryDepositData.totalFee
+
+      const totalWithdrawalAmount =
+        lastSummaryCacheData.totalWithdrawalAmount +
+        summaryWithdrawalData.totalAmount
+
+      const totalWithdrawalFee =
+        lastSummaryCacheData.totalWithdrawalFee + summaryWithdrawalData.totalFee
+
+      const totalCashoutAmount =
+        lastSummaryCacheData.totalCashoutAmount + summaryCashoutData.totalAmount
+
+      const totalCashoutFee =
+        lastSummaryCacheData.totalCashoutFee + summaryCashoutData.totalFee
+
+      const balance =
+        totalDepositAmount -
+        totalWithdrawalAmount -
+        totalCashoutAmount -
+        totalDepositFee -
+        totalWithdrawalFee -
+        totalCashoutFee
+
+      await this.summaryCachesService.createSummaryCache({
+        balance,
+        totalDepositAmount,
+        totalWithdrawalAmount,
+        totalCashoutAmount,
+        totalDepositFee,
+        totalWithdrawalFee,
+        totalCashoutFee,
+        cacheTime: midnightVnTime.toDate(),
+        isCrypto: false
+      })
     }
 
-    const lastSummaryCacheData =
-      await this.summaryCachesService.getLastSummaryCache(
-        midnightVnTime.toDate()
+    const existedCryptoCache =
+      await this.summaryCachesService.getSummaryCacheByCacheTime(
+        midnightVnTime.toDate(),
+        true
       )
+    if (!existedCryptoCache) {
+      const lastCryptoCacheData =
+        await this.summaryCachesService.getLastSummaryCache(
+          midnightVnTime.toDate(),
+          true
+        )
 
-    const summaryDepositData =
-      await this.depositsService.getDepositTotalBalanceByDate({
-        startDate: lastSummaryCacheData.cacheTime,
-        endDate: midnightVnTime.toDate()
+      const summaryDepositCryptoData =
+        await this.depositsService.getDepositTotalBalanceByDate({
+          startDate: lastCryptoCacheData.cacheTime,
+          endDate: midnightVnTime.toDate(),
+          isCrypto: true
+        })
+
+      const summaryWithdrawalCryptoData =
+        await this.withdrawalsService.getWithdrawalTotalBalanceByDate({
+          startDate: lastCryptoCacheData.cacheTime,
+          endDate: midnightVnTime.toDate(),
+          isCrypto: true
+        })
+      const summaryCashoutCryptoData =
+        await this.cashoutsService.getCashoutTotalBalanceByDate({
+          startDate: lastCryptoCacheData.cacheTime,
+          endDate: midnightVnTime.toDate(),
+          isCrypto: true
+        })
+
+      const totalDepositAmount =
+        lastCryptoCacheData.totalDepositAmount +
+        summaryDepositCryptoData.totalAmount
+      const totalDepositFee =
+        lastCryptoCacheData.totalDepositFee + summaryDepositCryptoData.totalFee
+
+      const totalWithdrawalAmount =
+        lastCryptoCacheData.totalWithdrawalAmount +
+        summaryWithdrawalCryptoData.totalAmount
+
+      const totalWithdrawalFee =
+        lastCryptoCacheData.totalWithdrawalFee +
+        summaryWithdrawalCryptoData.totalFee
+
+      const totalCashoutAmount =
+        lastCryptoCacheData.totalCashoutAmount +
+        summaryCashoutCryptoData.totalAmount
+
+      const totalCashoutFee =
+        lastCryptoCacheData.totalCashoutFee + summaryCashoutCryptoData.totalFee
+
+      const balance =
+        totalDepositAmount -
+        totalWithdrawalAmount -
+        totalCashoutAmount -
+        totalDepositFee -
+        totalWithdrawalFee -
+        totalCashoutFee
+
+      await this.summaryCachesService.createSummaryCache({
+        balance,
+        totalDepositAmount,
+        totalWithdrawalAmount,
+        totalCashoutAmount,
+        totalDepositFee,
+        totalWithdrawalFee,
+        totalCashoutFee,
+        cacheTime: midnightVnTime.toDate(),
+        isCrypto: true
       })
-
-    const summaryWithdrawalData =
-      await this.withdrawalsService.getWithdrawalTotalBalanceByDate({
-        startDate: lastSummaryCacheData.cacheTime,
-        endDate: midnightVnTime.toDate()
-      })
-    const summaryCashoutData =
-      await this.cashoutsService.getCashoutTotalBalanceByDate({
-        startDate: lastSummaryCacheData.cacheTime,
-        endDate: midnightVnTime.toDate()
-      })
-
-    const totalDepositAmount =
-      lastSummaryCacheData.totalDepositAmount + summaryDepositData.totalAmount
-    const totalDepositFee =
-      lastSummaryCacheData.totalDepositFee + summaryDepositData.totalFee
-
-    const totalWithdrawalAmount =
-      lastSummaryCacheData.totalWithdrawalAmount +
-      summaryWithdrawalData.totalAmount
-
-    const totalWithdrawalFee =
-      lastSummaryCacheData.totalWithdrawalFee + summaryWithdrawalData.totalFee
-
-    const totalCashoutAmount =
-      lastSummaryCacheData.totalCashoutAmount + summaryCashoutData.totalAmount
-
-    const totalCashoutFee =
-      lastSummaryCacheData.totalCashoutFee + summaryCashoutData.totalFee
-
-    const balance =
-      totalDepositAmount -
-      totalWithdrawalAmount -
-      totalCashoutAmount -
-      totalDepositFee -
-      totalWithdrawalFee -
-      totalCashoutFee
-
-    const newSummaryCache = await this.summaryCachesService.createSummaryCache({
-      balance,
-      totalDepositAmount,
-      totalWithdrawalAmount,
-      totalCashoutAmount,
-      totalDepositFee,
-      totalWithdrawalFee,
-      totalCashoutFee,
-      cacheTime: midnightVnTime.toDate()
-    })
-
-    return newSummaryCache
+    }
   }
 }
