@@ -26,7 +26,7 @@ export const DepositSchema = new mongoose.Schema(
       type: Number,
       required: false
     },
-    exchangeRate: {
+    usdToUsdtRate: {
       type: Number,
       required: false
     },

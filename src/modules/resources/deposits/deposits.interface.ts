@@ -7,7 +7,7 @@ export interface Deposit extends Document {
   upayOrderRef: string
   actualAmount: number
   usdActualAmount: number
-  exchangeRate: number
+  usdToUsdtRate: number
   chainName: string
   txHash: string
   usdFee: number

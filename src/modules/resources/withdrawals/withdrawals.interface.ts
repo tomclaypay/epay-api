@@ -10,7 +10,7 @@ export interface Withdrawal extends Document {
   amount: number
   customerWallet: string
   upayOrderRef: string
-  exchangeRate: number
+  usdToUsdtRate: number
   usdAmount: number
   txHash: string
   usdFee: number

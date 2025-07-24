@@ -86,26 +86,12 @@ export class WithdrawalsService implements OnModuleInit {
   async createWithdrawalOrderByCrypto(
     createWithdrawalOrderByCryptoDto: CreateWithdrawalOrderByCryptoDto
   ) {
-    const settings = await this.settingsService.getSettings()
-
     //Round the withdrawal amount
     createWithdrawalOrderByCryptoDto.usdAmount = Math.floor(
       createWithdrawalOrderByCryptoDto.usdAmount
     )
 
-    const minWithdrawalAmount =
-      settings.minWithdrawalAmount / settings.exchangeRate
-    const maxWithdrawalAmount =
-      settings.maxWithdrawalAmount / settings.exchangeRate
-
-    if (
-      createWithdrawalOrderByCryptoDto.usdAmount < minWithdrawalAmount ||
-      createWithdrawalOrderByCryptoDto.usdAmount > maxWithdrawalAmount
-    )
-      throw new HttpException(
-        `Withdrawal amount not valid. Amount must be greater than ${minWithdrawalAmount} and less than ${maxWithdrawalAmount}.`,
-        HttpStatus.BAD_REQUEST
-      )
+    const settings = await this.settingsService.getSettings()
 
     let attempts = 0
 
@@ -123,7 +109,7 @@ export class WithdrawalsService implements OnModuleInit {
           createWithdrawalOrderByCryptoDto.customerId,
           newOrder.id,
           createWithdrawalOrderByCryptoDto.toAddress,
-          createWithdrawalOrderByCryptoDto.usdAmount,
+          createWithdrawalOrderByCryptoDto.usdAmount * settings.usdToUsdtRate,
           createWithdrawalOrderByCryptoDto.mt5Id,
           createWithdrawalOrderByCryptoDto.chainName
         )
@@ -154,11 +140,9 @@ export class WithdrawalsService implements OnModuleInit {
     orderId: string,
     updateWithdrawalOrderByCryptoDto: UpdateWithdrawalOrderByCryptoDto
   ) {
-    const settings = await this.settingsService.getSettings()
     return this.withdrawalModel.findByIdAndUpdate(orderId, {
       ...updateWithdrawalOrderByCryptoDto,
-      fee: 0,
-      exchangeRate: settings.exchangeRate
+      fee: 0
     })
   }
   async updateWithdrawalOrder(

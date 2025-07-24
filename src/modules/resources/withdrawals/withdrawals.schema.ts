@@ -33,7 +33,7 @@ export const WithdrawalSchema = new mongoose.Schema(
       ref: 'CustomerWallet',
       required: false
     },
-    exchangeRate: {
+    usdToUsdtRate: {
       type: Number,
       required: false
     },

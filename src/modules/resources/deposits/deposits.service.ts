@@ -523,7 +523,6 @@ export class DepositsService implements OnModuleInit {
   async createDepositOrderByCrypto(
     createDepositOrderByCryptoDto: CreateDepositOrderByCryptoDto
   ) {
-    const settings = await this.settingsService.getSettings()
     //Delete spaces
     createDepositOrderByCryptoDto.mt5Id = createDepositOrderByCryptoDto.mt5Id
       ? createDepositOrderByCryptoDto.mt5Id?.trim().split('\t')[0]
@@ -534,29 +533,16 @@ export class DepositsService implements OnModuleInit {
       createDepositOrderByCryptoDto.usdAmount
     )
 
-    const minDepositAmount = settings.minDepositAmount / settings.exchangeRate
-    const maxDepositAmount = settings.maxDepositAmount / settings.exchangeRate
-
-    if (
-      createDepositOrderByCryptoDto.usdAmount < minDepositAmount ||
-      createDepositOrderByCryptoDto.usdAmount > maxDepositAmount
-    ) {
-      return
-    }
-    const amount =
-      createDepositOrderByCryptoDto.usdAmount * settings.exchangeRate
     let attempts = 0
     while (attempts < 3) {
       try {
         const code = await this.generateCode()
         const newOrder = new this.depositOrderModel({
           ...createDepositOrderByCryptoDto,
-          amount,
-          actualAmount: amount,
+          amount: createDepositOrderByCryptoDto.usdAmount,
+          actualAmount: createDepositOrderByCryptoDto.usdAmount,
           usdActualAmount: createDepositOrderByCryptoDto.usdAmount,
           code,
-          exchangeRate: settings.exchangeRate,
-          fee: createDepositOrderByCryptoDto.usdFee * settings.exchangeRate,
           orderType: DepositOrderType.CRYPTO
         })
 

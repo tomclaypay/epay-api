@@ -114,4 +114,9 @@ export class UpdateSettingsDto {
   @IsNumber()
   @IsOptional()
   depositAfterScanTime: number
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  usdToUsdtRate?: number
 }

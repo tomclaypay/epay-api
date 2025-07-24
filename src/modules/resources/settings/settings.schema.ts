@@ -21,7 +21,7 @@ export const SettingSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  exchangeRate: {
+  usdToUsdtRate: {
     type: Number
   },
   virtualType: {

@@ -94,6 +94,11 @@ export class CreateDepositOrderByCryptoDto {
   @IsNumber()
   @IsOptional()
   usdFee?: number
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  usdToUsdtRate?: number
 }
 
 export class UpdateDepositOrderDto {
@@ -115,7 +120,7 @@ export class UpdateDepositOrderDto {
   @ApiProperty()
   @IsNumber()
   @IsOptional()
-  exchangeRate?: number
+  usdToUsdtRate?: number
 
   @ApiProperty()
   @IsNumber()

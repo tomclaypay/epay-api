@@ -2,6 +2,7 @@ import { UpayWebhookDto } from '@/modules/aggregators/webhooks/upay-webhooks/dto
 import { DepositOrderType, OrderStatus } from '@/modules/common/dto/general.dto'
 import { CustomerWalletsService } from '@/modules/resources/customer-wallets/customer-wallets.service'
 import { DepositsService } from '@/modules/resources/deposits/deposits.service'
+import { SettingsService } from '@/modules/resources/settings/settings.service'
 import { WithdrawalsService } from '@/modules/resources/withdrawals/withdrawals.service'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
@@ -14,7 +15,8 @@ export class UpayWebhooksService {
     private readonly configService: ConfigService,
     private readonly depositsService: DepositsService,
     private readonly withdrawalsService: WithdrawalsService,
-    private readonly customerWalletsService: CustomerWalletsService
+    private readonly customerWalletsService: CustomerWalletsService,
+    private readonly settingsService: SettingsService
   ) {}
 
   async onModuleInit() {
@@ -52,16 +54,19 @@ export class UpayWebhooksService {
       return
     }
 
+    const settings = await this.settingsService.getSettings()
+
     const depositOrder = await this.depositsService.createDepositOrderByCrypto({
-      usdAmount: upayWebhookDto.amount * upayWebhookDto.usdtToUsdRate || 1,
+      usdAmount: upayWebhookDto.amount / settings.usdToUsdtRate || 1,
       callback: customer.callback,
       mt5Id: customer.mt5Id,
       status: OrderStatus.Succeed,
       chainName: upayWebhookDto.chainName,
       txHash: upayWebhookDto.txHash,
-      usdFee: upayWebhookDto.fee * upayWebhookDto.usdtToUsdRate || 1 || 0,
+      usdFee: upayWebhookDto.fee / settings.usdToUsdtRate || 1 || 0,
       customerWallet: customer.id,
-      upayOrderRef: upayWebhookDto.orderId
+      upayOrderRef: upayWebhookDto.orderId,
+      usdToUsdtRate: settings.usdToUsdtRate
     })
 
     this.depositsService.sendDepositCallback(
@@ -93,13 +98,15 @@ export class UpayWebhooksService {
       return
     }
 
+    const settings = await this.settingsService.getSettings()
+
     const updateWithdrawalOrder =
       await this.withdrawalsService.updateWithdrawalOrderByCrypto(
         upayWebhookDto.orderRef,
         {
           status: OrderStatus.Succeed,
           txHash: upayWebhookDto.txHash,
-          usdFee: upayWebhookDto.fee * upayWebhookDto.usdtToUsdRate || 1,
+          usdFee: upayWebhookDto.fee / settings.usdToUsdtRate || 1,
           customerWallet: customer.id
         }
       )
