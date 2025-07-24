@@ -579,7 +579,7 @@ export class WithdrawalsService implements OnModuleInit {
       ) || 0
 
     return [
-      withdrawals.length,
+      succeedWithdrawals.length,
       withdrawals.length - succeedWithdrawals.length,
       succeedWithdrawalTotalAmount,
       succeedWithdrawalTotalFee
