@@ -119,4 +119,9 @@ export class UpdateSettingsDto {
   @IsNumber()
   @IsOptional()
   usdToUsdtRate?: number
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  vndPerUsdt?: number
 }
