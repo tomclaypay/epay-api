@@ -1,6 +1,8 @@
+import { CashoutStatus } from '@/modules/common/dto/general.dto'
 import { ApiProperty } from '@nestjs/swagger'
 import {
   IsBoolean,
+  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -34,6 +36,38 @@ export class CreateCashoutOrderDto {
   note?: string
 }
 
+export class CreateCashoutOrderByUserDto {
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  amount: number
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  ref: string
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  chainName: string
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  walletAddress: string
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  vndPerUsdt?: number
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  actualAmountUsdt?: number
+}
+
 export class UpdateCashoutOrderDto {
   @ApiProperty()
   @IsNumber()
@@ -59,4 +93,14 @@ export class UpdateCashoutOrderDto {
   @IsString()
   @IsOptional()
   note?: string
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  actualAmountUsdt?: number
+
+  @ApiProperty()
+  @IsEnum(CashoutStatus)
+  @IsOptional()
+  status?: CashoutStatus
 }

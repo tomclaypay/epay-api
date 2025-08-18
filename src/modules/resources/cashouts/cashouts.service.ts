@@ -8,12 +8,14 @@ import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import { Cashout } from './cashouts.interface'
 import {
+  CreateCashoutOrderByUserDto,
   CreateCashoutOrderDto,
   UpdateCashoutOrderDto
 } from './dto/cashout-request.dto'
 import { SettingsService } from '../settings/settings.service'
 import { GetSummaryQueriesDto } from '@/modules/aggregators/admins/dto/admin-request.dto'
 import { sumBy } from 'lodash'
+import { CashoutStatus } from '@/modules/common/dto/general.dto'
 
 @Injectable()
 export class CashoutsService implements OnModuleInit {
@@ -66,7 +68,23 @@ export class CashoutsService implements OnModuleInit {
         createCashoutOrderDto.amount * settings.cashoutFeePct
     const newOrder = new this.cashoutModel({
       ...createCashoutOrderDto,
-      fee
+      fee,
+      status: CashoutStatus.Canceled
+    })
+    return newOrder.save()
+  }
+
+  async createCashoutOrderByUser(
+    createCashoutOrderByUserDto: CreateCashoutOrderByUserDto
+  ) {
+    const settings = await this.settingsService.getSettings()
+    const fee =
+      settings.cashoutFeeFlat +
+      createCashoutOrderByUserDto.amount * settings.cashoutFeePct
+    const newOrder = new this.cashoutModel({
+      ...createCashoutOrderByUserDto,
+      fee,
+      status: CashoutStatus.Pending
     })
     return newOrder.save()
   }
@@ -108,7 +126,8 @@ export class CashoutsService implements OnModuleInit {
         $gte: new Date(getSummaryQueriesDto.startDate),
         $lt: new Date(getSummaryQueriesDto.endDate)
       },
-      isCrypto: getSummaryQueriesDto.isCrypto
+      isCrypto: getSummaryQueriesDto.isCrypto,
+      status: CashoutStatus.Completed
     })
 
     const cashoutsTotalAmount = sumBy(cashouts, 'amount') || 0
@@ -123,7 +142,8 @@ export class CashoutsService implements OnModuleInit {
         $gte: new Date(getSummaryQueriesDto.startDate),
         $lt: new Date(getSummaryQueriesDto.endDate)
       },
-      isCrypto: getSummaryQueriesDto.isCrypto
+      isCrypto: getSummaryQueriesDto.isCrypto,
+      status: CashoutStatus.Completed
     })
   }
 
@@ -133,7 +153,8 @@ export class CashoutsService implements OnModuleInit {
         $gte: new Date(getSummaryQueriesDto.startDate),
         $lt: new Date(getSummaryQueriesDto.endDate)
       },
-      isCrypto: getSummaryQueriesDto.isCrypto
+      isCrypto: getSummaryQueriesDto.isCrypto,
+      status: CashoutStatus.Completed
     })
 
     return sumBy(cashouts, 'fee') || 0
@@ -145,7 +166,8 @@ export class CashoutsService implements OnModuleInit {
         $gte: new Date(getSummaryQueriesDto.startDate),
         $lt: new Date(getSummaryQueriesDto.endDate)
       },
-      isCrypto: getSummaryQueriesDto.isCrypto
+      isCrypto: getSummaryQueriesDto.isCrypto,
+      status: CashoutStatus.Completed
     })
 
     return sumBy(cashouts, 'amount') || 0
@@ -153,7 +175,8 @@ export class CashoutsService implements OnModuleInit {
 
   async getCashoutTotalBalance(isCrypto: boolean) {
     const succeedCashouts = await this.cashoutModel.find({
-      isCrypto: isCrypto
+      isCrypto: isCrypto,
+      status: CashoutStatus.Completed
     })
 
     const amount = sumBy(succeedCashouts, 'amount') || 0
@@ -169,7 +192,8 @@ export class CashoutsService implements OnModuleInit {
         $gte: new Date(getSummaryQueriesDto.startDate),
         $lt: new Date(getSummaryQueriesDto.endDate)
       },
-      isCrypto: getSummaryQueriesDto.isCrypto
+      isCrypto: getSummaryQueriesDto.isCrypto,
+      status: CashoutStatus.Completed
     })
 
     const amount = sumBy(cashouts, 'amount') || 0

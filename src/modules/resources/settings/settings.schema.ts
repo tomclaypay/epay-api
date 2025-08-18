@@ -22,6 +22,10 @@ export const SettingSchema = new mongoose.Schema({
     default: false
   },
   usdToUsdtRate: {
+    //  usd * usdToUsdtRate  = usdt
+    type: Number
+  },
+  vndPerUsdt: {
     type: Number
   },
   virtualType: {

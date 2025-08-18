@@ -51,6 +51,7 @@ import { WithdrawalsService } from '../../resources/withdrawals/withdrawals.serv
 import { GetSummaryQueriesDto } from './dto/admin-request.dto'
 import { CashoutsService } from '@/modules/resources/cashouts/cashouts.service'
 import {
+  CreateCashoutOrderByUserDto,
   CreateCashoutOrderDto,
   UpdateCashoutOrderDto
 } from '@/modules/resources/cashouts/dto/cashout-request.dto'
@@ -932,6 +933,7 @@ export class AdminsService implements OnModuleInit {
     return this.settingsService.updateSettingsForAdmin(updateSettingsDto)
   }
 
+  // Cashouts
   async cashoutListing(isCounting, keyword, start, length, sortBy, sortType) {
     return this.cashoutsService.cashoutListing(
       isCounting,
@@ -945,6 +947,21 @@ export class AdminsService implements OnModuleInit {
 
   async createCashoutForAdmin(createCashoutOrderDto: CreateCashoutOrderDto) {
     return this.cashoutsService.createCashoutOrder(createCashoutOrderDto)
+  }
+
+  async createCashoutOrderByUser(
+    createCashoutOrderByUserDto: CreateCashoutOrderByUserDto
+  ) {
+    const balance = await this.getBalanceCacheForAdmin(false)
+    if (createCashoutOrderByUserDto.amount > balance) {
+      throw new HttpException(
+        'Insufficient balance to make a cashout',
+        HttpStatus.BAD_REQUEST
+      )
+    }
+    return this.cashoutsService.createCashoutOrderByUser(
+      createCashoutOrderByUserDto
+    )
   }
 
   async updateCashoutForAdmin(

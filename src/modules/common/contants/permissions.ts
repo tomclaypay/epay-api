@@ -1,3 +1,5 @@
+import { expression } from 'joi'
+
 export const ROLE_CRUD = 'role.crud'
 export const ROLE_GET = 'role.get'
 export const ROLE_CREATE = 'role.create'
@@ -63,6 +65,7 @@ export const CASHOUT_GET = 'cashout.get'
 export const CASHOUT_CREATE = 'cashout.create'
 export const CASHOUT_UPDATE = 'cashout.update'
 export const CASHOUT_DELETE = 'cashout.delete'
+export const CASHOUT_CREATE_USER = 'cashout.create.user'
 
 export const CARD_TRANSACTION_CRUD = 'card_transaction.crud'
 export const CARD_TRANSACTION_GET = 'card_transaction.get'

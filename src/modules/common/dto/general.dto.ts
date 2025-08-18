@@ -17,3 +17,9 @@ export enum DepositOrderType {
   VIRTUAL = 'VIRTUAL',
   CRYPTO = 'CRYPTO'
 }
+
+export enum CashoutStatus {
+  Pending = 'PENDING',
+  Completed = 'COMPLETED',
+  Canceled = 'CANCELED'
+}

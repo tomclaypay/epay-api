@@ -1,3 +1,4 @@
+import { CashoutStatus } from '@/modules/common/dto/general.dto'
 import mongoose from 'mongoose'
 import MongooseDelete from 'mongoose-delete'
 const { ObjectId } = mongoose.Schema.Types
@@ -8,6 +9,23 @@ export const CashoutSchema = new mongoose.Schema(
       type: Number,
       required: true
     },
+    chainName: {
+      type: String,
+      required: false
+    },
+    walletAddress: {
+      type: String,
+      required: false
+    },
+    vndPerUsdt: {
+      // usdt = vnd / vndPerUsdt
+      type: Number,
+      required: false
+    },
+    actualAmountUsdt: {
+      type: Number,
+      required: false
+    },
     fee: {
       type: Number,
       required: false
@@ -16,6 +34,11 @@ export const CashoutSchema = new mongoose.Schema(
       type: Boolean,
       required: true,
       default: false
+    },
+    status: {
+      type: String,
+      enum: CashoutStatus,
+      default: CashoutStatus.Completed
     },
     ref: {
       type: String,

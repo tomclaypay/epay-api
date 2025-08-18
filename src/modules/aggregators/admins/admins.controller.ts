@@ -43,6 +43,7 @@ import {
   BANK_TRANSACTION_GET,
   BANK_UPDATE,
   CASHOUT_CREATE,
+  CASHOUT_CREATE_USER,
   CASHOUT_CRUD,
   CASHOUT_DELETE,
   CASHOUT_GET,
@@ -66,6 +67,7 @@ import {
   ROLE_GET,
   ROLE_UPDATE,
   SETTING_CRUD,
+  SETTING_GET,
   SUMMARY_GET,
   USER_CREATE,
   USER_CRUD,
@@ -149,6 +151,7 @@ import {
 } from '../../resources/withdrawals/dto/withdrawal-response.dto'
 import { WhitelistIPGuard } from '../../resources/auth/whitelist-ip.guard'
 import {
+  CreateCashoutOrderByUserDto,
   CreateCashoutOrderDto,
   UpdateCashoutOrderDto
 } from '@/modules/resources/cashouts/dto/cashout-request.dto'
@@ -1225,7 +1228,7 @@ export class AdminsController {
 
   //Settings
   @UseGuards(WhitelistIPGuard, JwtAuthGuard, PermissionGuard)
-  @Permission(SETTING_CRUD)
+  @Permission([SETTING_CRUD, SETTING_GET])
   @Get('settings')
   @ApiOkResponse({
     description: 'Get settings successful',
@@ -1302,6 +1305,21 @@ export class AdminsController {
     @Body() createCashoutOrderDto: CreateCashoutOrderDto
   ) {
     return this.adminsService.createCashoutForAdmin(createCashoutOrderDto)
+  }
+
+  @UseGuards(JwtAuthGuard, PermissionGuard)
+  @Permission([CASHOUT_CRUD, CASHOUT_CREATE_USER])
+  @Post('cashouts-user')
+  @AuthApiError()
+  @ApiCreatedResponse({
+    description: 'Create cashout successful'
+  })
+  async createCashoutOrderForUser(
+    @Body() createCashoutOrderByUserDto: CreateCashoutOrderByUserDto
+  ) {
+    return this.adminsService.createCashoutOrderByUser(
+      createCashoutOrderByUserDto
+    )
   }
 
   @UseGuards(JwtAuthGuard, PermissionGuard)
