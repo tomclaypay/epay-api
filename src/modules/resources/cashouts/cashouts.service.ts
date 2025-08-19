@@ -94,13 +94,14 @@ export class CashoutsService implements OnModuleInit {
     updateCashoutOrderDto: UpdateCashoutOrderDto,
     userId: string
   ) {
-    let fee = updateCashoutOrderDto.fee
-    if (updateCashoutOrderDto.amount && !updateCashoutOrderDto.isCrypto) {
-      const settings = await this.settingsService.getSettings()
-      fee =
-        settings.cashoutFeeFlat +
-        updateCashoutOrderDto.amount * settings.cashoutFeePct
-    }
+    const fee = updateCashoutOrderDto.fee
+    // if (updateCashoutOrderDto.amount && !updateCashoutOrderDto.isCrypto) {
+    //   const settings = await this.settingsService.getSettings()
+    //   fee =
+    //     settings.cashoutFeeFlat +
+    //     updateCashoutOrderDto.amount * settings.cashoutFeePct
+    //     if(fee !==)
+    // }
     return await this.cashoutModel.findOneAndUpdate(
       {
         _id: cashoutId
