@@ -54,8 +54,7 @@ export const DepositSchema = new mongoose.Schema(
     },
     hashId: {
       type: String,
-      required: false,
-      unique: true
+      required: false
     },
     txHash: {
       type: String,
