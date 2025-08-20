@@ -853,6 +853,8 @@ export class DepositsService implements OnModuleInit {
             timeout: 10000
           })
 
+          console.log('bodyData', bodyData)
+
           if (resData.ok) {
             console.log('Send callback succeed.')
             console.log('body data ref: ', bodyData.orderRef, resData)

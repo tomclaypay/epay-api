@@ -420,6 +420,8 @@ export class WithdrawalsService implements OnModuleInit {
             timeout: 10000
           })
 
+          console.log('bodyData', bodyData)
+
           if (resData.ok) {
             console.log('Send callback succeed.')
             return

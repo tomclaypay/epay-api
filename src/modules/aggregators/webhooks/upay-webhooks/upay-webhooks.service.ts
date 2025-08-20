@@ -69,9 +69,11 @@ export class UpayWebhooksService {
       usdToUsdtRate: settings.usdToUsdtRate
     })
 
+    console.log('depositOrder', depositOrder)
+
     this.depositsService.sendDepositCallback(
       customer.callback,
-      DepositOrderType.CRYPTO,
+      'DEPOSIT',
       depositOrder.id,
       null,
       depositOrder.code,
