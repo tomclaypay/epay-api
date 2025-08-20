@@ -113,9 +113,10 @@ export class UpayWebhooksService {
 
     this.withdrawalsService.sendWithdrawalCallback(
       customer.callback,
-      DepositOrderType.CRYPTO,
+      'WITHDRAWAL',
       updateWithdrawalOrder.id,
-      null,
+      updateWithdrawalOrder.ref,
+      updateWithdrawalOrder.code,
       updateWithdrawalOrder.status,
       updateWithdrawalOrder.amount,
       updateWithdrawalOrder.usdAmount
