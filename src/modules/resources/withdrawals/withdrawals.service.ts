@@ -271,6 +271,7 @@ export class WithdrawalsService implements OnModuleInit {
       'WITHDRAWAL',
       withdrawal.id,
       withdrawal.ref,
+      withdrawal.code,
       withdrawal.status,
       withdrawal.amount,
       withdrawal.usdAmount ?? 0,
